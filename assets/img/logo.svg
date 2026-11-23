@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 72" width="330" height="72">
+<g transform="translate(4,4)">
+<rect width="64" height="64" rx="14" fill="#0E1A2B"/>
+<path d="M12 30 L32 14 L52 30" fill="none" stroke="#C99A45" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="18" y="32" width="7" height="18" rx="1.5" fill="#F6F1E7"/>
+<rect x="28.5" y="26" width="7" height="24" rx="1.5" fill="#C99A45"/>
+<rect x="39" y="32" width="7" height="18" rx="1.5" fill="#F6F1E7"/>
+<rect x="14" y="50" width="36" height="3" rx="1.5" fill="#F6F1E7" opacity="0.7"/>
+</g>
+<text x="82" y="40" font-family="Georgia, 'Times New Roman', serif" font-size="30" font-weight="700" fill="#0E1A2B" letter-spacing="1">SAIF</text>
+<text x="168" y="40" font-family="Georgia, 'Times New Roman', serif" font-size="30" font-weight="400" fill="#C99A45" letter-spacing="1">BUILDERS</text>
+<text x="83" y="60" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#0E1A2B" opacity="0.7" letter-spacing="3.2">HONEST HOMES · TONGI</text>
+</svg>
