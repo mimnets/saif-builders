@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>প্রজেক্টসমূহ | সাইফ বিল্ডার্স</title>
+  <meta name="description" content="সাইফ বিল্ডার্সের প্রজেক্ট: টিভিএস ১২ তলা, শেখ খালেক টাওয়ার ১ ও ২, শেখ মালেক টাওয়ার, নিরিবিলি প্রজেক্ট। আউচপাড়া, টঙ্গী।">
+  <meta name="theme-color" content="#0E1A2B">
+  <meta property="og:image" content="assets/img/og.png">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/img/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="projects">
+  <div id="site-header"></div>
+  <main class="pt-[72px]">
+    <section class="relative overflow-hidden bg-cream py-16 sm:py-20">
+      <div class="grain pointer-events-none absolute inset-0 opacity-60"></div>
+      <div class="container-x relative">
+        <nav class="text-sm text-ink/55" aria-label="breadcrumb"><a href="index.html" class="hover:text-ink">হোম</a> / <span class="text-ink">প্রজেক্ট</span></nav>
+        <h1 class="mt-4 text-4xl font-bold sm:text-5xl">আমাদের প্রজেক্টসমূহ</h1>
+        <p class="mt-4 max-w-2xl text-lg text-ink/70">প্রতিটি প্রজেক্টের জমি যাচাই করা, কাগজ পরিষ্কার। ৩ডি ভিউ, ফ্লোর প্ল্যান আর পেমেন্ট প্ল্যান দেখতে প্রজেক্টে ক্লিক করুন।</p>
+        <div class="mt-8 flex flex-wrap gap-2" id="filters" role="tablist"></div>
+      </div>
+    </section>
+    <section class="py-14 sm:py-20">
+      <div class="container-x">
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" id="grid"></div>
+        <p id="empty" class="hidden py-16 text-center text-ink/60">এই ক্যাটাগরিতে এখন কোনো প্রজেক্ট নেই।</p>
+      </div>
+    </section>
+    <section class="px-5 pb-20 sm:px-8">
+      <div class="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 rounded-[2rem] bg-ink p-8 text-cream sm:flex-row sm:items-center sm:p-12">
+        <div><h2 class="text-2xl font-bold text-white sm:text-3xl">কোন প্রজেক্ট আপনার জন্য ভালো হবে?</h2><p class="mt-2 text-cream/70">বাজেট আর পরিবারের প্রয়োজন বলুন, আমরা মিলিয়ে দেখাব।</p></div>
+        <a href="index.html#contact" class="btn-brass !px-7 !py-4">পরামর্শ নিন, বিনামূল্যে</a>
+      </div>
+    </section>
+  </main>
+  <div id="site-footer"></div>
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    (function () {
+      const tabs = [["all", "সব প্রজেক্ট"], ["booking", "বুকিং চলছে"], ["ongoing", "নির্মাণাধীন"], ["ready", "রেডি ফ্ল্যাট"]];
+      let cur = "all";
+      const f = document.getElementById("filters"), g = document.getElementById("grid");
+      const draw = () => {
+        f.innerHTML = tabs.map(([k, t]) => {
+          const n = k === "all" ? PROJECTS.length : PROJECTS.filter((p) => p.status === k).length;
+          return `<button role="tab" aria-selected="${k === cur}" data-k="${k}" class="rounded-full px-5 py-2.5 text-[15px] font-semibold transition ${k === cur ? "bg-ink text-cream" : "bg-white text-ink ring-1 ring-ink/10 hover:ring-ink/30"}">${t} <span class="opacity-60">${bn(n)}</span></button>`;
+        }).join("");
+        const list = PROJECTS.filter((p) => cur === "all" || p.status === cur);
+        g.innerHTML = list.map(projectCard).join("");
+        document.getElementById("empty").classList.toggle("hidden", list.length > 0);
+        initReveal();
+      };
+      f.addEventListener("click", (e) => { const b = e.target.closest("[data-k]"); if (b) { cur = b.dataset.k; draw(); } });
+      draw();
+    })();
+  </script>
+</body>
+</html>
