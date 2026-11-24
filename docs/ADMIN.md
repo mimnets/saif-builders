@@ -1,6 +1,6 @@
 # অ্যাডমিন গাইড: ওয়েবসাইটের লেখা ও ছবি বদলানো
 
-অ্যাডমিন প্যানেল: **https://mimnets.github.io/saif-builders/admin/**
+অ্যাডমিন প্যানেল: **https://www.saifbuildersbd.com/admin/**
 
 কোনো আলাদা সার্ভার বা ডাটাবেস নেই। আপনি যা বদলাবেন, তা সরাসরি GitHub-এ সেভ হয়, আর ১–২ মিনিট পর ওয়েবসাইটে দেখা যায়।
 
@@ -51,14 +51,14 @@
 
 ## লগইন সেটআপ ("Sign in with GitHub" বাটনের জন্য, একবার করলেই হবে)
 
-GitHub Pages নিজে লগইন সামলাতে পারে না, তাই একটা ছোট ফ্রি Cloudflare Worker লাগে:
+স্ট্যাটিক সাইট নিজে GitHub লগইন সামলাতে পারে না, তাই একটা ছোট ফ্রি Cloudflare Worker লাগে:
 
 1. https://github.com/sveltia/sveltia-cms-auth এ গিয়ে **Deploy to Cloudflare Workers** চাপুন (ফ্রি অ্যাকাউন্ট)।
    Worker-এর URL পাবেন, যেমন `https://sveltia-cms-auth.<নাম>.workers.dev`।
 2. GitHub → Settings → Developer settings → **OAuth Apps → New OAuth App**
-   - Homepage URL: `https://mimnets.github.io/saif-builders/`
+   - Homepage URL: `https://www.saifbuildersbd.com/`
    - Authorization callback URL: `https://sveltia-cms-auth.<নাম>.workers.dev/callback`
    - Client ID আর একটা Client Secret তৈরি করে রাখুন।
 3. Cloudflare → Worker → Settings → Variables:
-   `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` (Secret হিসেবে), `ALLOWED_DOMAINS` = `mimnets.github.io`
+   `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` (Secret হিসেবে), `ALLOWED_DOMAINS` = `www.saifbuildersbd.com, saifbuildersbd.com`
 4. `public/admin/config.yml` এ `base_url:` লাইনের `#` সরিয়ে Worker-এর URL বসান।
