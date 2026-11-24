@@ -1,0 +1,175 @@
+@import "tailwindcss";
+@import "@fontsource-variable/noto-sans-bengali/wght.css";
+@import "@fontsource-variable/anek-bangla/wght.css";
+
+/* ------------------------------------------------------------------
+   Brand tokens: taken from the official logo (public/img/logo.png)
+   black #000 · gold #CFB06D · grey #6D6E72 (stars)
+   To rebrand, change only these values.
+   ------------------------------------------------------------------ */
+@theme {
+  --font-sans: "Noto Sans Bengali Variable", "Noto Sans Bengali", "Hind Siliguri", system-ui, sans-serif;
+  --font-display: "Anek Bangla Variable", "Anek Bangla", "Noto Sans Bengali Variable", sans-serif;
+
+  --color-ink: #141414;        /* logo black (softened): text, dark sections */
+  --color-ink-2: #222222;
+  --color-ink-3: #333333;
+  --color-steel: #6d6e72;      /* logo grey (stars) */
+  --color-brass: #cfb06d;      /* logo gold: accents, primary buttons (with ink text, 8.9:1) */
+  --color-brass-l: #e2cd9c;
+  --color-brass-d: #866521;    /* gold text on light bg: 5.4:1 on white, 4.8:1 on cream */
+  --color-cream: #f7f1e4;      /* warm tint of the gold: soft sections */
+  --color-paper: #fcfaf6;      /* page background */
+  --color-sage: #4f6e4d;
+  --color-wa: #157a3c;         /* WhatsApp green, darkened for AA with white text */
+
+  /* "night" = dark cards & sections. Switchable from the CMS (সাইট সেটিংস → রঙের থিম),
+     see the html[data-surface] blocks below. Use bg-night / text-on-night / text-on-night-2 / text-night-accent. */
+  --color-night: #141414;
+  --color-night-2: #222222;
+  --color-on-night: #ffffff;       /* headings on dark surfaces */
+  --color-on-night-2: #f7f1e4;     /* body text on dark surfaces (use with /70–/85) */
+  --color-night-accent: #e2cd9c;   /* small gold labels on dark surfaces */
+
+  --shadow-soft: 0 1px 2px rgb(20 20 20 / 0.04), 0 8px 24px -12px rgb(20 20 20 / 0.12);
+  --shadow-lift: 0 2px 4px rgb(20 20 20 / 0.06), 0 24px 48px -20px rgb(20 20 20 / 0.28);
+
+  /* Bangla needs more vertical room than Latin: matras and conjuncts sit above/below the line */
+  --text-base--line-height: 1.8;
+  --text-lg--line-height: 1.8;
+  --text-xl--line-height: 1.6;
+  --text-2xl--line-height: 1.45;
+  --text-3xl--line-height: 1.35;
+  --text-4xl--line-height: 1.3;
+  --text-5xl--line-height: 1.25;
+  --text-6xl--line-height: 1.2;
+}
+
+@layer base {
+  html {
+    font-size: 106.25%; /* 17px base: Bangla glyphs read small at 16px */
+    scroll-behavior: smooth;
+    scroll-padding-top: 88px;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-paper font-sans text-ink antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display text-ink;
+    font-weight: 650;
+    text-wrap: balance;
+    letter-spacing: 0; /* never track Bangla: it breaks the headstroke (মাত্রা) */
+  }
+  p { text-wrap: pretty; }
+  :focus-visible { outline: 2px solid var(--color-brass); outline-offset: 3px; border-radius: 6px; }
+  ::selection { background: var(--color-brass); color: var(--color-ink); }
+  summary::-webkit-details-marker { display: none; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+}
+
+@layer components {
+  .container-x { @apply mx-auto w-full max-w-7xl px-5 sm:px-8; }
+  .section { @apply py-20 sm:py-28; }
+
+  .eyebrow { @apply inline-flex items-center gap-3 text-[15px] font-semibold text-brass-d; }
+  .eyebrow::before { content: ""; @apply h-px w-8 bg-brass; }
+  .eyebrow-light { @apply text-night-accent; }
+
+  .h-section { @apply mt-3 text-3xl sm:text-4xl lg:text-[2.75rem] lg:leading-[1.25]; }
+  .lead { @apply text-lg text-ink/75; }
+  .prose-bn { @apply max-w-[65ch] text-lg leading-[1.9] text-ink/80; }
+  .prose-bn p + p { @apply mt-4; }
+
+  .btn, .btn-brass, .btn-ink, .btn-wa, .btn-outline, .btn-ghost, .btn-ghost-night {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 py-3 text-base font-semibold transition duration-200 active:scale-[.98];
+  }
+  .btn-brass { @apply bg-brass text-ink hover:bg-brass-l; }
+  .btn-ink { @apply bg-ink text-cream hover:bg-ink-2; }
+  .btn-wa { @apply bg-wa text-white hover:brightness-110; }
+  .btn-outline { @apply bg-white text-ink ring-1 ring-ink/15 hover:ring-ink/40; }
+  .btn-ghost { @apply text-white ring-1 ring-white/40 hover:bg-white/10; }
+
+  .card { @apply rounded-3xl bg-white shadow-soft ring-1 ring-ink/5; }
+  .chip { @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[13px] font-semibold leading-6; }
+  .field {
+    @apply w-full rounded-2xl bg-paper px-4 py-3.5 text-base text-ink ring-1 ring-ink/10 transition placeholder:text-ink/45 focus:bg-white focus:ring-2 focus:ring-brass focus:outline-none;
+  }
+
+  .status-upcoming { @apply bg-ink text-brass-l; }
+  .status-booking { @apply bg-brass/20 text-brass-d; }
+  .status-ongoing { @apply bg-sky-100 text-sky-900; }
+  .status-ready { @apply bg-emerald-100 text-emerald-900; }
+}
+
+@layer utilities {
+  .snap-row { scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .snap-row::-webkit-scrollbar { display: none; }
+  .snap-row > * { scroll-snap-align: start; }
+  .grain { background-image: radial-gradient(rgb(20 20 20 / .06) 1px, transparent 1px); background-size: 18px 18px; }
+  .num { font-variant-numeric: tabular-nums; }
+}
+
+/* motion */
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.in { opacity: 1; transform: none; }
+.no-js .reveal { opacity: 1; transform: none; }
+.hero-slide { opacity: 0; transform: scale(1.06); transition: opacity 1.2s ease, transform 7s linear; }
+.hero-slide.is-active { opacity: 1; transform: scale(1); }
+details[open] .faq-plus { transform: rotate(45deg); }
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .hero-slide { opacity: 1; transform: none; transition: none; }
+  .hero-slide:not(.is-active) { opacity: 0; }
+}
+
+/* header: transparent over the hero, solid after scroll / on inner pages */
+.hdr { transition: background-color .3s, box-shadow .3s, color .3s; }
+.hdr.is-solid { background: rgb(252 250 246 / .92); backdrop-filter: blur(16px); box-shadow: 0 1px 0 rgb(20 20 20 / .06); color: var(--color-ink); }
+.hdr:not(.is-solid) { color: #fff; }
+.hdr:not(.is-solid) .hdr-sub { color: rgb(255 255 255 / .7); }
+.hdr:not(.is-solid) .nav-link:hover { background: rgb(255 255 255 / .1); }
+.hdr:not(.is-solid) .menu-btn { background: rgb(255 255 255 / .12); }
+
+/* ------------------------------------------------------------------
+   Switchable theme (set in the CMS, rendered as attributes on <html>)
+   data-surface: black | espresso | graphite | bronze | light
+   data-accent:  logo | deep | champagne
+   data-footer:  black | match
+   ------------------------------------------------------------------ */
+.surface { background: var(--surface-bg, var(--color-night)); color: var(--color-on-night-2); }
+.btn-ghost-night { @apply text-on-night ring-1 ring-on-night/40 hover:bg-on-night/10; }
+
+html[data-surface="espresso"] {
+  --color-night: #2a2218; --color-night-2: #3a3023;
+  --surface-bg: linear-gradient(145deg, #33291c, #211a12);
+}
+html[data-surface="graphite"] {
+  --color-night: #2e2f33; --color-night-2: #3b3c41;
+  --surface-bg: linear-gradient(145deg, #37383c, #26272a);
+}
+html[data-surface="bronze"] {
+  --color-night: #1d1812; --color-night-2: #2c241a;
+  --surface-bg: radial-gradient(130% 140% at 0% 0%, #4a3a22 0%, #1f1912 55%, #141414 100%);
+}
+html[data-surface="light"] {
+  --color-night: #f3e9d2; --color-night-2: #e9dab7;
+  --color-on-night: #141414; --color-on-night-2: #141414;
+  --color-night-accent: #866521;
+  --surface-bg: linear-gradient(145deg, #f7efdc, #efe2c4);
+}
+html[data-surface="light"] .surface:not(section):not(footer) { box-shadow: inset 0 0 0 1px rgb(207 176 109 / .7); }
+html[data-surface="light"] .surface > img { opacity: .07; filter: grayscale(1); }
+
+html[data-accent="deep"] { --color-brass: #b8913f; --color-brass-l: #d4b676; }
+html[data-accent="champagne"] { --color-brass: #dcc79a; --color-brass-l: #ebddb9; }
+
+/* footer stays black unless "match" is chosen */
+html:not([data-footer="match"]) footer.surface {
+  --color-night: #141414; --color-night-2: #222222;
+  --color-on-night: #ffffff; --color-on-night-2: #f7f1e4; --color-night-accent: #e2cd9c;
+  --surface-bg: #141414;
+}

@@ -1,0 +1,69 @@
+---
+import Icon from "./Icon.astro";
+import site from "../data/site.json";
+import { bn, url, waLink, telLink } from "../lib/utils";
+import { getProjects } from "../lib/projects";
+const projects = await getProjects();
+const year = bn(new Date().getFullYear());
+---
+<footer class="surface text-on-night-2/80">
+  <div class="container-x grid gap-10 py-16 md:grid-cols-12">
+    <div class="md:col-span-4">
+      <a href={url("/")} class="flex items-center gap-3">
+        <img src={url(site.logo)} alt="" class="h-20 w-20 rounded-full" width="80" height="80" loading="lazy" />
+        <span class="leading-tight">
+          <span class="block font-display text-2xl font-bold text-on-night">{site.name}</span>
+          <span class="block text-[11px] tracking-[.2em] text-night-accent">{(site.tagline_en || site.name_en).toUpperCase()}</span>
+        </span>
+      </a>
+      <p class="mt-5 max-w-sm text-[15px] leading-7">{site.footer_about}</p>
+      <div class="mt-6 flex gap-3">
+        {site.facebook && <a href={site.facebook} target="_blank" rel="noopener" aria-label="ফেসবুক" class="grid h-11 w-11 place-items-center rounded-full bg-on-night/5 ring-1 ring-on-night/10 hover:bg-on-night/10"><Icon name="fb" /></a>}
+        <a href={waLink()} target="_blank" rel="noopener" aria-label="হোয়াটসঅ্যাপ" class="grid h-11 w-11 place-items-center rounded-full bg-on-night/5 ring-1 ring-on-night/10 hover:bg-on-night/10"><Icon name="wa" /></a>
+        <a href={telLink()} aria-label="ফোন" class="grid h-11 w-11 place-items-center rounded-full bg-on-night/5 ring-1 ring-on-night/10 hover:bg-on-night/10"><Icon name="phone" /></a>
+      </div>
+    </div>
+    <div class="md:col-span-2">
+      <h2 class="text-lg font-semibold text-on-night">সাইফ বিল্ডার্স</h2>
+      <ul class="mt-4 space-y-2 text-[15px]">
+        <li><a class="hover:text-brass" href={url("/about/")}>আমাদের কথা</a></li>
+        <li><a class="hover:text-brass" href={url("/projects/")}>সব প্রজেক্ট</a></li>
+        <li><a class="hover:text-brass" href={url("/upcoming/")}>আসন্ন প্রজেক্ট</a></li>
+        <li><a class="hover:text-brass" href={url("/#offers")}>অফার</a></li>
+        <li><a class="hover:text-brass" href={url("/#contact")}>যোগাযোগ</a></li>
+      </ul>
+    </div>
+    <div class="md:col-span-3">
+      <h2 class="text-lg font-semibold text-on-night">প্রজেক্টসমূহ</h2>
+      <ul class="mt-4 space-y-2 text-[15px]">
+        {projects.map((p) => <li><a class="hover:text-brass" href={url(`/projects/${p.id}/`)}>{p.data.title}</a></li>)}
+      </ul>
+    </div>
+    <div class="md:col-span-3">
+      <h2 class="text-lg font-semibold text-on-night">অফিস</h2>
+      <ul class="mt-4 space-y-3 text-[15px]">
+        <li class="flex gap-3"><Icon name="pin" class="mt-1 h-5 w-5 shrink-0 text-brass" /><span>{site.address}</span></li>
+        <li class="flex gap-3"><Icon name="phone" class="mt-1 h-5 w-5 shrink-0 text-brass" /><a href={telLink()} class="num hover:text-brass">{bn(site.phone)}</a></li>
+        {site.email && <li class="flex gap-3"><Icon name="mail" class="mt-1 h-5 w-5 shrink-0 text-brass" /><a href={`mailto:${site.email}`} class="hover:text-brass">{site.email}</a></li>}
+        {site.facebook && <li class="flex gap-3"><Icon name="fb" class="mt-1 h-5 w-5 shrink-0 text-brass" /><a href={site.facebook} target="_blank" rel="noopener" class="hover:text-brass">{site.facebook.replace(/^https?:\/\/(www\.)?/, "")}</a></li>}
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-on-night/10">
+    <div class="container-x flex flex-col gap-2 py-6 pb-28 text-sm text-on-night-2/60 lg:flex-row lg:justify-between lg:gap-6 lg:pb-6">
+      <span>© {year} {site.name}। সর্বস্বত্ব সংরক্ষিত।</span>
+      <span>{site.footer_note}</span>
+      <span class="text-[11px] text-on-night-2/45">Maintained by <a href="https://mimnets.com" target="_blank" rel="noopener" class="hover:text-brass">mimnets.com</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- desktop floating WhatsApp -->
+<a href={waLink()} target="_blank" rel="noopener" aria-label="হোয়াটসঅ্যাপে মেসেজ দিন" class="fixed bottom-6 right-6 z-40 hidden h-14 w-14 place-items-center rounded-full bg-wa text-white shadow-lift transition hover:scale-105 lg:grid">
+  <span class="absolute inset-0 animate-ping rounded-full bg-wa/30 motion-reduce:hidden"></span><Icon name="wa" class="relative h-7 w-7" />
+</a>
+<!-- mobile action bar -->
+<div class="fixed inset-x-0 bottom-0 z-40 grid grid-cols-2 gap-2 border-t border-ink/10 bg-paper/95 p-3 pb-[max(.75rem,env(safe-area-inset-bottom))] backdrop-blur-xl lg:hidden">
+  <a href={telLink()} class="btn-ink !min-h-12 !py-2"><Icon name="phone" /> কল করুন</a>
+  <a href={waLink()} target="_blank" rel="noopener" class="btn-wa !min-h-12 !py-2"><Icon name="wa" /> হোয়াটসঅ্যাপ</a>
+</div>

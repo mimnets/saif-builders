@@ -1,0 +1,18 @@
+---
+import Base from "../layouts/Base.astro";
+import Icon from "../components/Icon.astro";
+import { url } from "../lib/utils";
+---
+<Base title="পেজটি পাওয়া যায়নি">
+  <section class="section">
+    <div class="container-x max-w-2xl text-center">
+      <p class="font-display text-7xl font-bold text-brass">৪০৪</p>
+      <h1 class="mt-4 text-3xl font-bold sm:text-4xl">দুঃখিত, এই পেজটি পাওয়া যায়নি</h1>
+      <p class="lead mt-4">লিংকটি হয়তো বদলে গেছে। হোম পেজ থেকে বা প্রজেক্ট তালিকা থেকে খুঁজে দেখুন।</p>
+      <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+        <a href={url("/")} class="btn-ink"><Icon name="home" /> হোম পেজ</a>
+        <a href={url("/projects/")} class="btn-outline">সব প্রজেক্ট <Icon name="arrow" /></a>
+      </div>
+    </div>
+  </section>
+</Base>

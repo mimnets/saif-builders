@@ -1,0 +1,76 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import site from "../data/site.json";
+import { url } from "../lib/utils";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  transparentHeader?: boolean;
+  jsonld?: Record<string, unknown>;
+}
+const { title, description = site.seo_description, image = site.og_image, transparentHeader = false, jsonld } = Astro.props;
+const fullTitle = title ? `${title} | ${site.name}` : site.seo_title;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(url(image), Astro.site);
+const org = {
+  "@context": "https://schema.org",
+  "@type": "RealEstateAgent",
+  name: site.name,
+  alternateName: site.name_en,
+  telephone: "+" + site.whatsapp,
+  address: { "@type": "PostalAddress", streetAddress: site.address, addressLocality: "Tongi", addressRegion: "Gazipur", addressCountry: "BD" },
+  url: new URL(url("/"), Astro.site).href,
+  logo: new URL(url("/img/icon-512.png"), Astro.site).href,
+  sameAs: [site.facebook].filter(Boolean),
+};
+---
+<!doctype html>
+<html lang="bn" class="no-js" data-surface={site.theme?.surface ?? "black"} data-accent={site.theme?.accent ?? "logo"} data-footer={site.theme?.footer ?? "black"}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <meta name="theme-color" content="#141414" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="bn_BD" />
+  <meta property="og:site_name" content={site.name} />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={ogImage} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href={url("/img/favicon-32.png")} sizes="32x32" type="image/png" />
+  <link rel="icon" href={url("/img/icon-192.png")} sizes="192x192" type="image/png" />
+  <link rel="apple-touch-icon" href={url("/img/apple-touch-icon.png")} />
+  <link rel="manifest" href={url("/site.webmanifest")} />
+  <script is:inline>document.documentElement.classList.remove("no-js")</script>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonld ?? org)} />
+</head>
+<body>
+  <Header transparent={transparentHeader} />
+  <main id="main" class:list={{ "pt-[72px]": !transparentHeader }}>
+    <slot />
+  </main>
+  <Footer />
+  <script>
+    const io = new IntersectionObserver(
+      (es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }),
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+    );
+    document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+    // scroll-snap carousels with prev/next buttons
+    document.querySelectorAll<HTMLElement>("[data-carousel]").forEach((wrap) => {
+      const row = wrap.querySelector<HTMLElement>(".snap-row")!;
+      const step = () => (row.firstElementChild?.getBoundingClientRect().width || 300) + 24;
+      wrap.querySelector("[data-prev]")?.addEventListener("click", () => row.scrollBy({ left: -step(), behavior: "smooth" }));
+      wrap.querySelector("[data-next]")?.addEventListener("click", () => row.scrollBy({ left: step(), behavior: "smooth" }));
+    });
+  </script>
+</body>
+</html>
