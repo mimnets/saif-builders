@@ -2,10 +2,10 @@
 
 Astro + Tailwind CSS static site, content edited with **Sveltia CMS** at `/admin`.
 No database: all content lives in this GitHub repo and every CMS "Publish" is a commit.
-GitHub Actions builds and deploys to GitHub Pages.
+Vercel builds and deploys every push to `main` (preview deployments for other branches).
 
-- Live: https://mimnets.github.io/saif-builders/
-- Admin: https://mimnets.github.io/saif-builders/admin/
+- Live: https://www.saifbuildersbd.com
+- Admin: https://www.saifbuildersbd.com/admin/
 - Staff guide (বাংলা): [docs/ADMIN.md](docs/ADMIN.md)
 - Handoff & go-live checklist: [docs/HANDOFF.md](docs/HANDOFF.md)
 
@@ -31,21 +31,18 @@ Old links `project.html?id=tvs` redirect automatically.
 
 ```bash
 npm install
-npm run dev        # http://localhost:4321/saif-builders/
+npm run dev        # http://localhost:4321/
 npm run build      # → dist/
 ```
 
 Requires Node 22.23+.
 
-## One-time GitHub setup
+## Hosting (Vercel)
 
-1. **Settings → Pages → Source: GitHub Actions** (replaces the old `gh-pages` branch deploy).
-2. Push to `main`; the `Deploy to GitHub Pages` workflow publishes the site.
-3. Admin login: see "লগইন সেটআপ" in [docs/ADMIN.md](docs/ADMIN.md).
-
-### Custom domain
-Set `SITE_URL` / `BASE_PATH` in `.github/workflows/deploy.yml` (e.g. `https://saifbuilders.com` and `/`),
-update `site_url` in `public/admin/config.yml`, then add the domain under Settings → Pages.
+- Project is connected to this repo; `vercel.json` pins framework **Astro**, build `npm run build`, output `dist`, Node 22.
+- Push to `main` → production (www.saifbuildersbd.com). Push to any other branch → preview URL.
+- The site is served from the domain root. To host under a sub-folder, set env `BASE_PATH=/folder` (and `SITE_URL`).
+- Admin login: see "লগইন সেটআপ" in [docs/ADMIN.md](docs/ADMIN.md).
 
 ## Design notes
 

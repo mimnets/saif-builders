@@ -1,13 +1,13 @@
 # Handoff: Saif Builders website v2
 
-Branch: `redesign` → merge into `main` to go live.
+Production: https://www.saifbuildersbd.com (Vercel, deploys `main`).
 Staff guide (বাংলা): [ADMIN.md](ADMIN.md) · Developer notes: [../README.md](../README.md)
 
 ## What changed
 
 | Area | Before | Now |
 |---|---|---|
-| Stack | Hand-written HTML + JS, prebuilt CSS (Tailwind source missing) | Astro 7 + Tailwind 4, static build via GitHub Actions |
+| Stack | Hand-written HTML + JS, prebuilt CSS (Tailwind source missing) | Astro 7 + Tailwind 4, static build on Vercel |
 | Content | Hard-coded in `assets/js/*.js` and HTML | Markdown/JSON in `src/content` and `src/data`, edited at `/admin` (Sveltia CMS, no database) |
 | URLs | `project.html?id=tvs` | `/projects/tvs/` (old links redirect) |
 | Pages | Home, projects, project | + About (`/about/`), Upcoming (`/upcoming/`), 404 |
@@ -19,14 +19,15 @@ Staff guide (বাংলা): [ADMIN.md](ADMIN.md) · Developer notes: [../READ
 
 ## Go-live checklist (repo owner)
 
-1. **Merge** `redesign` into `main` (pull request or `git merge`).
-2. **Settings → Pages → Source: GitHub Actions.** The old `gh-pages` branch is no longer used (can be deleted after launch).
-3. Wait for **Actions → Deploy to GitHub Pages** to go green, then open https://mimnets.github.io/saif-builders/.
-4. **Editors:** add each person under Settings → Collaborators (Write).
-5. **Admin login:** either
+Hosting is **Vercel** (www.saifbuildersbd.com), deploying `main` automatically.
+
+1. Merge into `main` → Vercel builds and publishes (~1 min). Check https://www.saifbuildersbd.com.
+2. **Editors:** add each person under GitHub → Settings → Collaborators (Write).
+3. **Admin login** at https://www.saifbuildersbd.com/admin/ — either
    - quick: each editor creates a fine-grained token (repo `mimnets/saif-builders`, Contents: read & write) and uses "Sign in with Token", or
    - proper: deploy the Cloudflare auth worker and set `base_url` in `public/admin/config.yml` (steps in ADMIN.md → লগইন সেটআপ).
-6. Test once in the admin: change a small text, Publish, confirm the site updates in ~2 minutes.
+4. Test once in the admin: change a small text, Publish, confirm the site updates in ~1–2 minutes.
+5. Optional clean-up: the old `gh-pages` branch and GitHub Pages setting are no longer used.
 
 ## Waiting on the client
 

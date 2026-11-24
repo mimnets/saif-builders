@@ -2,11 +2,10 @@
 import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 
-// GitHub Pages project site: https://mimnets.github.io/saif-builders/
-// With a custom domain (e.g. saifbuilders.com) set SITE_URL=https://saifbuilders.com and BASE_PATH=/
-// in .github/workflows/deploy.yml.
-const site = process.env.SITE_URL || "https://mimnets.github.io";
-const base = process.env.BASE_PATH || "/saif-builders";
+// Production: Vercel at https://www.saifbuildersbd.com (site served from the domain root).
+// To serve from a sub-folder instead (e.g. GitHub Pages project site), set BASE_PATH=/folder-name.
+const site = process.env.SITE_URL || "https://www.saifbuildersbd.com";
+const base = process.env.BASE_PATH || "/";
 
 export default defineConfig({
   site,

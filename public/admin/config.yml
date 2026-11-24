@@ -16,9 +16,9 @@ backend:
     uploadMedia: "মিডিয়া: “{{path}}” আপলোড"
     deleteMedia: "মিডিয়া: “{{path}}” মুছে ফেলা"
 
-site_url: https://mimnets.github.io/saif-builders/
-display_url: https://mimnets.github.io/saif-builders/
-logo_url: https://mimnets.github.io/saif-builders/img/logo-mark.png
+site_url: https://www.saifbuildersbd.com/
+display_url: https://www.saifbuildersbd.com/
+logo_url: https://www.saifbuildersbd.com/img/logo-mark.png
 
 # All uploads go to public/uploads and are referenced as /uploads/...
 media_folder: public/uploads
