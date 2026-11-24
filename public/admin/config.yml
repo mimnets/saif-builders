@@ -1,0 +1,456 @@
+# Sveltia CMS configuration: https://github.com/sveltia/sveltia-cms
+# Every "Publish" in the admin makes a commit to GitHub → the GitHub Action rebuilds the site (~1–2 min).
+# Field names must match src/content.config.ts and src/data/*.json.
+
+backend:
+  name: github
+  repo: mimnets/saif-builders
+  branch: main
+  # "Sign in with GitHub" button needs a tiny OAuth helper (free Cloudflare Worker).
+  # Setup steps: docs/ADMIN.md → "লগইন সেটআপ". Until then use "Sign in with Token".
+  # base_url: https://sveltia-cms-auth.YOUR-ACCOUNT.workers.dev
+  commit_messages:
+    create: "কনটেন্ট: নতুন {{collection}} “{{slug}}”"
+    update: "কনটেন্ট: {{collection}} “{{slug}}” আপডেট"
+    delete: "কনটেন্ট: {{collection}} “{{slug}}” মুছে ফেলা"
+    uploadMedia: "মিডিয়া: “{{path}}” আপলোড"
+    deleteMedia: "মিডিয়া: “{{path}}” মুছে ফেলা"
+
+site_url: https://mimnets.github.io/saif-builders/
+display_url: https://mimnets.github.io/saif-builders/
+logo_url: https://mimnets.github.io/saif-builders/img/logo-mark.png
+
+# All uploads go to public/uploads and are referenced as /uploads/...
+media_folder: public/uploads
+public_folder: /uploads
+
+# Photos from phones are huge: convert to WebP and cap the size before committing.
+media_libraries:
+  default:
+    config:
+      max_file_size: 15000000
+      transformations:
+        raster_image:
+          format: webp
+          quality: 82
+          width: 2000
+          height: 2000
+
+editor:
+  preview: false
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  # ================================================================
+  - name: projects
+    label: প্রজেক্ট
+    label_singular: প্রজেক্ট
+    description: প্রতিটি প্রজেক্টের পেজ। নতুন প্রজেক্ট যোগ করতে “New” চাপুন।
+    folder: src/content/projects
+    extension: md
+    format: frontmatter
+    create: true
+    delete: true
+    identifier_field: title
+    slug: "{{name_en}}"
+    summary: "{{order}}. {{title}} ({{status}})"
+    sortable_fields: [order, title]
+    media_folder: /public/uploads/projects
+    public_folder: /uploads/projects
+    fields:
+      - { label: প্রজেক্টের নাম (বাংলা), name: title, widget: string }
+      - { label: প্রজেক্টের নাম (ইংরেজি), name: name_en, widget: string, hint: "ওয়েব লিংক এটা থেকে তৈরি হবে, যেমন tvs-12-storied" }
+      - { label: ক্রম, name: order, widget: number, value_type: int, default: 10, hint: "ছোট নম্বর আগে দেখাবে" }
+      - label: অবস্থা
+        name: status
+        widget: select
+        options:
+          - { label: আসন্ন (শীঘ্রই আসছে), value: upcoming }
+          - { label: বুকিং চলছে, value: booking }
+          - { label: নির্মাণাধীন, value: ongoing }
+          - { label: রেডি ফ্ল্যাট, value: ready }
+      - { label: হোম পেজে দেখাবে, name: featured, widget: boolean, default: true }
+      - { label: লুকিয়ে রাখুন (ড্রাফট), name: draft, widget: boolean, default: false, required: false }
+      - { label: তলা, name: floors, widget: number, value_type: int, required: false }
+      - { label: এলাকা, name: location, widget: string, default: "আউচপাড়া, টঙ্গী" }
+      - { label: গুগল ম্যাপ সার্চ, name: map_query, widget: string, required: false, hint: "ইংরেজিতে রাস্তা/এলাকার নাম, যেমন: Mokter Bari Road, Auchpara, Tongi। বিল্ডিংয়ের নাম বা পোস্ট কোড দিলে গুগল ভুল জায়গা দেখাতে পারে।" }
+      - { label: ছোট বর্ণনা (কার্ডে দেখায়), name: tagline, widget: text }
+      - { label: প্রধান ছবি, name: cover, widget: image }
+      - label: ছবির গ্যালারি
+        name: gallery
+        widget: list
+        summary: "{{fields.caption}}"
+        fields:
+          - { label: ছবি, name: image, widget: image }
+          - { label: ক্যাপশন, name: caption, widget: string, required: false }
+      - label: ফ্লোর প্ল্যান
+        name: floor_plans
+        widget: list
+        summary: "{{fields.size}} বর্গফুট"
+        fields:
+          - { label: সাইজ (বর্গফুট, ইংরেজি সংখ্যায়), name: size, widget: number, value_type: int }
+          - { label: টাইপ, name: label, widget: string, required: false, hint: "যেমন: টাইপ A" }
+          - { label: বেডরুম, name: beds, widget: string, required: false, hint: "যেমন: ৩ বেড" }
+          - { label: বাথরুম, name: baths, widget: string, required: false }
+          - { label: অন্যান্য রুম, name: rooms, widget: string, required: false }
+          - { label: প্ল্যানের ছবি, name: image, widget: image }
+      - { label: বেডরুম (সারসংক্ষেপ), name: bedrooms, widget: string, required: false }
+      - { label: কিস্তির মেয়াদ, name: installment, widget: string, required: false }
+      - { label: ডাউন পেমেন্ট, name: down_payment, widget: string, required: false }
+      - { label: মাসিক কিস্তি, name: monthly, widget: string, required: false }
+      - { label: দাম, name: ready_price, widget: string, required: false }
+      - { label: সুবিধাসমূহ, name: features, widget: list, field: { label: সুবিধা, name: feature, widget: string } }
+      - { label: বিস্তারিত বর্ণনা, name: body, widget: markdown, buttons: [bold, italic, link, bulleted-list, numbered-list], editor_components: [] }
+
+  # ================================================================
+  - name: settings
+    label: সাইট সেটিংস
+    description: ফোন, ঠিকানা, লোগো, হোম পেজ আর অফার
+    editor: { preview: false }
+    files:
+      # ---------------------------------------------------------------
+      - name: site
+        label: যোগাযোগ ও সাধারণ তথ্য
+        file: src/data/site.json
+        fields:
+          - { label: কোম্পানির নাম, name: name, widget: string }
+          - { label: কোম্পানির নাম (ইংরেজি), name: name_en, widget: string }
+          - { label: ট্যাগলাইন (ইংরেজি), name: tagline_en, widget: string, required: false, hint: "লোগোর লেখা: Premium Property" }
+          - { label: স্লোগান, name: slogan, widget: string }
+          - { label: লোগো (পূর্ণ), name: logo, widget: image, hint: "বর্গাকার PNG/SVG। ফুটারে দেখায়।" }
+          - { label: লোগো আইকন (ছোট), name: logo_icon, widget: image, required: false, hint: "ছোট সাইজে পড়া যায় এমন অংশ। হেডারে দেখায়।" }
+          - { label: ফোন নম্বর, name: phone, widget: string, hint: "ইংরেজি সংখ্যায়, যেমন 01616100001" }
+          - { label: হোয়াটসঅ্যাপ নম্বর, name: whatsapp, widget: string, hint: "দেশের কোডসহ, + ছাড়া: 8801616100001" }
+          - { label: হোয়াটসঅ্যাপ ডিফল্ট মেসেজ, name: whatsapp_default, widget: string }
+          - { label: ফেসবুক পেজ লিংক, name: facebook, widget: string, required: false }
+          - { label: ইমেইল, name: email, widget: string, required: false }
+          - { label: অফিসের ঠিকানা, name: address, widget: text }
+          - { label: গুগল ম্যাপ সার্চ (ইংরেজি), name: map_query, widget: string, hint: "রাস্তা/এলাকার নাম দিন, যেমন: Mokter Bari Road, Auchpara, Tongi। সেভ করার পর ম্যাপে পিন ঠিক জায়গায় আছে কিনা দেখে নিন।" }
+          - { label: স্বত্বাধিকারীর নাম, name: owner, widget: string }
+          - { label: স্বত্বাধিকারীর পদবি, name: owner_title, widget: string }
+          - { label: ফুটারের বর্ণনা, name: footer_about, widget: text }
+          - { label: ফুটারের নোট, name: footer_note, widget: string }
+          - label: রঙের থিম
+            name: theme
+            widget: object
+            hint: "বদলে Publish করুন, ১–২ মিনিট পর পুরো সাইটে দেখাবে। পছন্দ না হলে আবার আগেরটা বেছে নিন।"
+            fields:
+              - label: কার্ড ও গাঢ় সেকশনের রঙ
+                name: surface
+                widget: select
+                default: black
+                options:
+                  - { label: "কালো (লোগোর মতো, বর্তমান)", value: black }
+                  - { label: "এসপ্রেসো: উষ্ণ গাঢ় বাদামি", value: espresso }
+                  - { label: "গ্রাফাইট: লোগোর ধূসর থেকে", value: graphite }
+                  - { label: "ব্রোঞ্জ: কালো থেকে সোনালি আভা", value: bronze }
+                  - { label: "হালকা সোনালি: উজ্জ্বল, গাঢ় রঙ ছাড়া", value: light }
+              - label: সোনালি রঙের শেড
+                name: accent
+                widget: select
+                default: logo
+                options:
+                  - { label: "লোগোর সোনালি (বর্তমান)", value: logo }
+                  - { label: "গাঢ় সোনালি", value: deep }
+                  - { label: "শ্যাম্পেন: হালকা সোনালি", value: champagne }
+              - label: ফুটারের রঙ
+                name: footer
+                widget: select
+                default: black
+                options:
+                  - { label: "সবসময় কালো", value: black }
+                  - { label: "কার্ডের রঙের সাথে মিলিয়ে", value: match }
+          - { label: গুগলে টাইটেল (SEO), name: seo_title, widget: string }
+          - { label: গুগলে বর্ণনা (SEO), name: seo_description, widget: text, hint: "১৫০–১৬০ অক্ষরের মধ্যে রাখুন" }
+          - { label: শেয়ার ইমেজ (1200×630), name: og_image, widget: image, hint: "ফেসবুক/হোয়াটসঅ্যাপে লিংক শেয়ার করলে এই ছবি দেখায়" }
+
+      # ---------------------------------------------------------------
+      - name: offers
+        label: অফার
+        file: src/data/offers.json
+        fields:
+          - { label: অফার সেকশন দেখাবে, name: show, widget: boolean, default: true }
+          - { label: ছোট শিরোনাম, name: eyebrow, widget: string }
+          - { label: শিরোনাম, name: heading, widget: string }
+          - { label: বর্ণনা, name: intro, widget: text }
+          - { label: অফারের শেষ সময়, name: deadline, widget: datetime, required: false, hint: "খালি রাখলে কাউন্টডাউন দেখাবে না" }
+          - { label: কাউন্টডাউনের লেখা, name: deadline_label, widget: string }
+          - label: অফারসমূহ
+            name: items
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - &icon
+                label: আইকন
+                name: icon
+                widget: select
+                options:
+                  - { label: "ঢাল / নিরাপত্তা (shield)", value: shield }
+                  - { label: "ইট / নির্মাণ (brick)", value: brick }
+                  - { label: "ঘড়ি / সময় (clock)", value: clock }
+                  - { label: "চ্যাট / আপডেট (chat)", value: chat }
+                  - { label: "কাগজ / দলিল (doc)", value: doc }
+                  - { label: "ওয়ালেট / কিস্তি (wallet)", value: wallet }
+                  - { label: "ট্যাগ / ছাড় (tag)", value: tag }
+                  - { label: "টাকা / ক্যাশ (cash)", value: cash }
+                  - { label: "উপহার (gift)", value: gift }
+                  - { label: "টিকেট / ড্র (ticket)", value: ticket }
+                  - { label: "মানুষ / রেফার (users)", value: users }
+                  - { label: "বাস / যাতায়াত (bus)", value: bus }
+                  - { label: "স্কুল (school)", value: school }
+                  - { label: "হাসপাতাল (hospital)", value: hospital }
+                  - { label: "ব্যাংক (bank)", value: bank }
+                  - { label: "বাজার (cart)", value: cart }
+                  - { label: "চাবি (key)", value: key }
+                  - { label: "বাড়ি (home)", value: home }
+                  - { label: "ভবন (building)", value: building }
+                  - { label: "স্তর / ফ্লোর (layers)", value: layers }
+                  - { label: "গ্রাফ / লাভ (trend)", value: trend }
+                  - { label: "লোকেশন (pin)", value: pin }
+                  - { label: "ফোন (phone)", value: phone }
+                  - { label: "টিক চিহ্ন (check)", value: check }
+                  - { label: "তারা (star)", value: star }
+              - { label: শিরোনাম, name: title, widget: string }
+              - { label: বর্ণনা, name: text, widget: text }
+              - { label: ব্যাজ, name: badge, widget: string, required: false }
+              - { label: চালু আছে, name: active, widget: boolean, default: true }
+
+      # ---------------------------------------------------------------
+      - name: home
+        label: হোম পেজ
+        file: src/data/home.json
+        fields:
+          - label: হিরো (প্রথম স্ক্রিন)
+            name: hero
+            widget: object
+            fields:
+              - { label: উপরের ছোট লেখা, name: badge, widget: string }
+              - { label: শিরোনাম, name: title, widget: string }
+              - { label: শিরোনাম (রঙিন অংশ), name: title_highlight, widget: string }
+              - { label: বর্ণনা, name: text, widget: text }
+              - { label: প্রধান বাটন, name: primary_cta, widget: string }
+              - { label: প্রধান বাটনের হোয়াটসঅ্যাপ মেসেজ, name: primary_message, widget: string }
+              - { label: দ্বিতীয় বাটন, name: secondary_cta, widget: string }
+              - { label: স্লাইডের ছবি, name: slides, widget: list, field: { label: ছবি, name: image, widget: image } }
+              - label: সংখ্যার ঘর
+                name: stats
+                widget: list
+                summary: "{{fields.label}}: {{fields.value}}{{fields.suffix}}"
+                fields:
+                  - { label: লেবেল, name: label, widget: string }
+                  - { label: মান (বড় লেখা), name: value, widget: string }
+                  - { label: মানের পরে (ছোট লেখা), name: suffix, widget: string, required: false }
+
+          - label: কেন আমরা
+            name: why
+            widget: object
+            collapsed: true
+            fields:
+              - { label: ছোট শিরোনাম, name: eyebrow, widget: string }
+              - { label: শিরোনাম, name: heading, widget: string }
+              - { label: বর্ণনা, name: text, widget: text }
+              - { label: উক্তি, name: quote, widget: text }
+              - { label: স্বত্বাধিকারীর ছবি, name: owner_photo, widget: image, required: false }
+              - label: সুবিধাগুলো
+                name: items
+                widget: list
+                summary: "{{fields.title}}"
+                fields: [*icon, { label: শিরোনাম, name: title, widget: string }, { label: বর্ণনা, name: text, widget: text }]
+
+          - label: সেবা ও ধাপ
+            name: services
+            widget: object
+            collapsed: true
+            fields:
+              - { label: ছোট শিরোনাম, name: eyebrow, widget: string }
+              - { label: শিরোনাম, name: heading, widget: string }
+              - { label: বর্ণনা, name: text, widget: text }
+              - label: কিস্তিতে ফ্ল্যাট (কার্ড)
+                name: installment
+                widget: object
+                fields:
+                  - { label: ব্যাজ, name: badge, widget: string }
+                  - { label: শিরোনাম, name: title, widget: string }
+                  - { label: বর্ণনা, name: text, widget: text }
+                  - { label: তথ্য, name: facts, widget: list, summary: "{{fields.label}}: {{fields.value}}", fields: [{ label: লেবেল, name: label, widget: string }, { label: মান, name: value, widget: string }] }
+              - label: রেডি ফ্ল্যাট (কার্ড)
+                name: ready
+                widget: object
+                fields:
+                  - { label: ব্যাজ, name: badge, widget: string }
+                  - { label: শিরোনাম, name: title, widget: string }
+                  - { label: বর্ণনা, name: text, widget: text }
+                  - { label: পেছনের ছবি, name: image, widget: image, required: false }
+                  - { label: বাটনে যে প্রজেক্ট খুলবে, name: link_project, widget: relation, collection: projects, value_field: "{{slug}}", search_fields: [title], display_fields: [title], required: false }
+                  - { label: তথ্য, name: facts, widget: list, summary: "{{fields.label}}: {{fields.value}}", fields: [{ label: লেবেল, name: label, widget: string }, { label: মান, name: value, widget: string }] }
+              - { label: ধাপের শিরোনাম, name: steps_heading, widget: string }
+              - { label: ধাপসমূহ, name: steps, widget: list, summary: "{{fields.title}}", fields: [{ label: শিরোনাম, name: title, widget: string }, { label: বর্ণনা, name: text, widget: text }] }
+
+          - label: প্রজেক্ট সেকশন
+            name: projects
+            widget: object
+            collapsed: true
+            fields:
+              - { label: ছোট শিরোনাম, name: eyebrow, widget: string }
+              - { label: শিরোনাম, name: heading, widget: string }
+
+          - label: কিস্তি ক্যালকুলেটর
+            name: emi
+            widget: object
+            collapsed: true
+            fields:
+              - { label: ছোট শিরোনাম, name: eyebrow, widget: string }
+              - { label: শিরোনাম, name: heading, widget: string }
+              - { label: বর্ণনা, name: text, widget: text }
+              - { label: সর্বনিম্ন দাম (টাকা), name: price_min, widget: number, value_type: int }
+              - { label: সর্বোচ্চ দাম (টাকা), name: price_max, widget: number, value_type: int }
+              - { label: শুরুর দাম (টাকা), name: price_default, widget: number, value_type: int }
+              - { label: সর্বনিম্ন ডাউন পেমেন্ট, name: down_min, widget: number, value_type: int }
+              - { label: সর্বোচ্চ ডাউন পেমেন্ট, name: down_max, widget: number, value_type: int }
+              - { label: শুরুর ডাউন পেমেন্ট, name: down_default, widget: number, value_type: int }
+              - { label: মেয়াদ (বছর), name: years, widget: list, field: { label: বছর, name: year, widget: number, value_type: int } }
+              - { label: শুরুর মেয়াদ (বছর), name: years_default, widget: number, value_type: int }
+              - { label: নিচের নোট, name: note, widget: text }
+              - label: পাশের টিপস
+                name: tips
+                widget: list
+                summary: "{{fields.title}}"
+                fields: [*icon, { label: শিরোনাম, name: title, widget: string }, { label: বর্ণনা, name: text, widget: text }]
+
+          - label: এলাকার সুবিধা
+            name: area
+            widget: object
+            collapsed: true
+            fields:
+              - { label: ছোট শিরোনাম, name: eyebrow, widget: string }
+              - { label: শিরোনাম, name: heading, widget: string }
+              - { label: বর্ণনা, name: text, widget: text }
+              - label: সুবিধাগুলো
+                name: items
+                widget: list
+                summary: "{{fields.title}}"
+                fields: [*icon, { label: শিরোনাম, name: title, widget: string }, { label: বর্ণনা, name: text, widget: text }]
+              - { label: ক্রেতাদের শিরোনাম, name: who_heading, widget: string }
+              - { label: ক্রেতাদের বর্ণনা, name: who_text, widget: text }
+              - { label: ক্রেতাদের পেশা, name: who, widget: list, field: { label: পেশা, name: item, widget: string } }
+
+          - label: রিভিউ
+            name: reviews
+            widget: object
+            collapsed: true
+            fields:
+              - { label: ছোট শিরোনাম, name: eyebrow, widget: string }
+              - { label: শিরোনাম, name: heading, widget: string }
+              - label: রিভিউগুলো
+                name: items
+                widget: list
+                summary: "{{fields.name}} {{fields.role}}"
+                fields:
+                  - { label: নাম, name: name, widget: string, required: false, hint: "নাম খালি রাখলে গাঢ় রঙের 'সার্বিক মতামত' কার্ড হবে" }
+                  - { label: পেশা / পরিচয়, name: role, widget: string }
+                  - { label: ছবি, name: photo, widget: image, required: false }
+                  - { label: মতামত, name: text, widget: text }
+
+          - label: প্রশ্নোত্তর
+            name: faq
+            widget: object
+            collapsed: true
+            fields:
+              - { label: ছোট শিরোনাম, name: eyebrow, widget: string }
+              - { label: শিরোনাম, name: heading, widget: string }
+              - { label: বর্ণনা, name: text, widget: text }
+              - { label: সাহায্য কার্ডের শিরোনাম, name: help_heading, widget: string }
+              - { label: সাহায্য কার্ডের লেখা, name: help_text, widget: string }
+              - { label: হোয়াটসঅ্যাপ মেসেজ, name: help_message, widget: string }
+              - { label: অফিস সময়, name: office_hours, widget: string, required: false, hint: "যেমন: শনি–বৃহস্পতি, সকাল ১০টা–সন্ধ্যা ৭টা। খালি রাখলে দেখাবে না।" }
+              - { label: প্রশ্নগুলো, name: items, widget: list, summary: "{{fields.q}}", fields: [{ label: প্রশ্ন, name: q, widget: string }, { label: উত্তর, name: a, widget: text }] }
+
+          - label: যোগাযোগ সেকশন
+            name: contact
+            widget: object
+            collapsed: true
+            fields:
+              - { label: ছোট শিরোনাম, name: eyebrow, widget: string }
+              - { label: শিরোনাম, name: heading, widget: string }
+              - { label: বর্ণনা, name: text, widget: text }
+
+          - label: শেষের ব্যানার
+            name: cta
+            widget: object
+            collapsed: true
+            fields:
+              - { label: শিরোনাম, name: heading, widget: string }
+              - { label: বর্ণনা, name: text, widget: text }
+              - { label: পেছনের ছবি, name: image, widget: image, required: false }
+
+      # ---------------------------------------------------------------
+      - name: about
+        label: আমাদের কথা (পেজ)
+        file: src/data/about.json
+        fields:
+          - { label: গুগলে টাইটেল, name: seo_title, widget: string }
+          - { label: গুগলে বর্ণনা, name: seo_description, widget: text }
+          - label: উপরের অংশ
+            name: hero
+            widget: object
+            fields:
+              - { label: ছোট শিরোনাম, name: eyebrow, widget: string }
+              - { label: শিরোনাম, name: title, widget: string }
+              - { label: বর্ণনা, name: text, widget: text }
+              - { label: ছবি, name: image, widget: image, required: false }
+          - label: আমাদের গল্প
+            name: story
+            widget: object
+            fields:
+              - { label: শিরোনাম, name: heading, widget: string }
+              - { label: লেখা, name: text, widget: text, hint: "অনুচ্ছেদ আলাদা করতে মাঝে একটা ফাঁকা লাইন রাখুন" }
+          - label: লক্ষ্য (Mission)
+            name: mission
+            widget: object
+            fields:
+              - { label: শিরোনাম, name: heading, widget: string }
+              - { label: লেখা, name: text, widget: text }
+          - label: স্বপ্ন (Vision)
+            name: vision
+            widget: object
+            fields:
+              - { label: শিরোনাম, name: heading, widget: string }
+              - { label: লেখা, name: text, widget: text }
+          - label: নীতিসমূহ
+            name: values
+            widget: object
+            fields:
+              - { label: শিরোনাম, name: heading, widget: string }
+              - label: নীতিগুলো
+                name: items
+                widget: list
+                summary: "{{fields.title}}"
+                fields: [*icon, { label: শিরোনাম, name: title, widget: string }, { label: বর্ণনা, name: text, widget: text }]
+          - label: স্বত্বাধিকারীর কথা
+            name: owner
+            widget: object
+            fields:
+              - { label: ছোট শিরোনাম, name: eyebrow, widget: string }
+              - { label: ছবি (৪:৫ খাড়া), name: photo, widget: image, required: false }
+              - { label: বার্তা, name: message, widget: text }
+
+      # ---------------------------------------------------------------
+      - name: upcoming
+        label: আসন্ন প্রজেক্ট (পেজ)
+        file: src/data/upcoming.json
+        description: আসন্ন প্রজেক্ট যোগ করতে "প্রজেক্ট" থেকে নতুন প্রজেক্ট বানিয়ে অবস্থা "আসন্ন" দিন।
+        fields:
+          - { label: গুগলে টাইটেল, name: seo_title, widget: string }
+          - { label: গুগলে বর্ণনা, name: seo_description, widget: text }
+          - { label: ছোট শিরোনাম, name: eyebrow, widget: string }
+          - { label: শিরোনাম, name: heading, widget: string }
+          - { label: বর্ণনা, name: text, widget: text }
+          - { label: প্রজেক্ট না থাকলে শিরোনাম, name: empty_heading, widget: string }
+          - { label: প্রজেক্ট না থাকলে লেখা, name: empty_text, widget: text }
+          - { label: বাটনের লেখা, name: notify_cta, widget: string }
+          - { label: বাটনের হোয়াটসঅ্যাপ মেসেজ, name: notify_message, widget: text }
+          - { label: বুকিং অংশের শিরোনাম, name: booking_heading, widget: string }
+          - { label: বুকিং অংশের লেখা, name: booking_text, widget: text }

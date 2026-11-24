@@ -1,54 +1,59 @@
 # সাইফ বিল্ডার্স ওয়েবসাইট
 
-স্ট্যাটিক ওয়েবসাইট (HTML + Tailwind CSS + JavaScript)। কোনো সার্ভার বা ডাটাবেস লাগে না, তাই GitHub Pages-এ বিনামূল্যে হোস্ট করা যায়।
+Astro + Tailwind CSS static site, content edited with **Sveltia CMS** at `/admin`.
+No database: all content lives in this GitHub repo and every CMS "Publish" is a commit.
+GitHub Actions builds and deploys to GitHub Pages.
 
-## ফাইলগুলো কোথায় কী
+- Live: https://mimnets.github.io/saif-builders/
+- Admin: https://mimnets.github.io/saif-builders/admin/
+- Staff guide (বাংলা): [docs/ADMIN.md](docs/ADMIN.md)
+- Handoff & go-live checklist: [docs/HANDOFF.md](docs/HANDOFF.md)
 
-| ফাইল | কাজ |
-|---|---|
-| `index.html` | হোম/ল্যান্ডিং পেজ |
-| `projects.html` | সব প্রজেক্টের তালিকা (ফিল্টারসহ) |
-| `project.html?id=tvs` | প্রজেক্টের বিস্তারিত পেজ (৩ডি ভিউ, ফ্লোর প্ল্যান, পেমেন্ট প্ল্যান) |
-| `assets/js/data.js` | **ফোন নম্বর, ঠিকানা, প্রজেক্ট, অফার সব এখানে।** কিছু বদলাতে শুধু এই ফাইলটা এডিট করুন |
-| `assets/img/projects/<id>/` | প্রতিটি প্রজেক্টের `view-1..4.svg` (৩ডি ভিউ) আর `plan-1000/1250/1500.svg` (ফ্লোর প্ল্যান) |
-| `assets/img/logo.svg`, `favicon.svg` | লোগো ও ফেভিকন |
-| `assets/css/style.css` | বিল্ড করা Tailwind CSS |
+## Where things live
 
-প্রজেক্ট id: `tvs`, `khalek-1`, `khalek-2`, `malek`, `niribili`
+| What | File / folder | Edited in CMS as |
+|---|---|---|
+| Phone, WhatsApp, address, logo, SEO | `src/data/site.json` | সাইট সেটিংস → যোগাযোগ ও সাধারণ তথ্য |
+| Homepage sections (hero, features, FAQ, reviews…) | `src/data/home.json` | সাইট সেটিংস → হোম পেজ |
+| Offers | `src/data/offers.json` | সাইট সেটিংস → অফার |
+| About page (`/about/`) | `src/data/about.json` | সাইট সেটিংস → আমাদের কথা (পেজ) |
+| Upcoming page (`/upcoming/`) | `src/data/upcoming.json` + projects with status `upcoming` | সাইট সেটিংস → আসন্ন প্রজেক্ট (পেজ) |
+| Projects (one file each) | `src/content/projects/<id>.md` | প্রজেক্ট |
+| Uploaded photos | `public/uploads/…` (projects in `public/uploads/projects/<id>/`) | Media / image fields |
+| Logo, favicon, share image | `public/img/` | logo + og_image fields in site settings |
+| Brand colors & fonts | `src/styles/global.css` (`@theme`) | (code only) |
+| CMS fields | `public/admin/config.yml` | (code only) |
 
-### আসল ছবি বসাতে চাইলে
-একই নামে ছবি রাখলেই হবে, যেমন `assets/img/projects/tvs/view-1.jpg`। তারপর `assets/js/project.js` এবং `main.js`-এ `.svg` লেখা জায়গায় `.jpg` করে দিন।
+Project URL = file name: `src/content/projects/tvs.md` → `/projects/tvs/`.
+Old links `project.html?id=tvs` redirect automatically.
 
----
+## Develop
 
-## GitHub Pages-এ হোস্ট করার নিয়ম (ব্রাউজার থেকে, কোনো সফটওয়্যার ছাড়া)
-
-1. https://github.com এ লগইন করুন। ডান কোণে **+** থেকে **New repository**।
-2. নাম দিন, যেমন `saif-builders`। **Public** রাখুন। **Create repository** চাপুন।
-3. নতুন রিপোতে **uploading an existing file** লিংকে ক্লিক করুন।
-4. ZIP ফাইলটা আনজিপ করে ভেতরের **সব ফাইল ও ফোল্ডার** (index.html যেখানে আছে সেখানকার সবকিছু) টেনে এনে ছেড়ে দিন। নিচে **Commit changes** চাপুন।
-5. রিপোর **Settings → Pages** এ যান। **Source: Deploy from a branch**, Branch: **main**, ফোল্ডার: **/ (root)**। **Save**।
-6. ১-২ মিনিট পর সাইট চালু হবে: `https://<আপনার-ইউজারনেম>.github.io/saif-builders/`
-
-### কমান্ড লাইন দিয়ে (git জানা থাকলে)
-```bash
-cd saif-builders-website
-git init && git add . && git commit -m "Saif Builders website"
-git branch -M main
-git remote add origin https://github.com/<ইউজারনেম>/saif-builders.git
-git push -u origin main
-```
-তারপর উপরের ৫ নম্বর ধাপ।
-
-### নিজের ডোমেইন (যেমন saifbuilders.com)
-Settings → Pages → **Custom domain** এ ডোমেইন লিখুন। ডোমেইন প্রোভাইডারে একটা `CNAME` রেকর্ড দিন `<ইউজারনেম>.github.io` এর দিকে।
-
----
-
-## ডিজাইন বদলাতে (ডেভেলপারদের জন্য)
-CSS আবার বিল্ড করতে `source` ফোল্ডারে:
 ```bash
 npm install
-npx @tailwindcss/cli -i src/input.css -o public/assets/css/style.css --minify
-python3 tools/gen_images.py   # ৩ডি ভিউ, ফ্লোর প্ল্যান, লোগো নতুন করে তৈরি
+npm run dev        # http://localhost:4321/saif-builders/
+npm run build      # → dist/
 ```
+
+Requires Node 22.23+.
+
+## One-time GitHub setup
+
+1. **Settings → Pages → Source: GitHub Actions** (replaces the old `gh-pages` branch deploy).
+2. Push to `main`; the `Deploy to GitHub Pages` workflow publishes the site.
+3. Admin login: see "লগইন সেটআপ" in [docs/ADMIN.md](docs/ADMIN.md).
+
+### Custom domain
+Set `SITE_URL` / `BASE_PATH` in `.github/workflows/deploy.yml` (e.g. `https://saifbuilders.com` and `/`),
+update `site_url` in `public/admin/config.yml`, then add the domain under Settings → Pages.
+
+## Design notes
+
+- Brand tokens come from the official logo (`public/img/logo.png`): black, gold `#CFB06D`, grey `#6D6E72`.
+  Master file: `brand/logo.jpg`; web versions (round PNG, favicons, `og.png`) are generated from it.
+  `brass-d #866521` is used for brass-coloured *text* so it passes WCAG AA on light backgrounds.
+- **Switchable theme** (CMS: সাইট সেটিংস → যোগাযোগ ও সাধারণ তথ্য → রঙের থিম, stored in `site.json → theme`).
+  Rendered as `data-surface` / `data-accent` / `data-footer` on `<html>`; dark cards and sections use the
+  `surface` class plus `text-on-night*` / `bg-night-2` / `text-night-accent` tokens, so new dark blocks follow the theme.
+- Fonts (self-hosted via Fontsource): **Noto Sans Bengali** for body (reading comfort, correct conjuncts),
+  **Anek Bangla** for headings. Base size 17px, body line-height 1.8, no letter-spacing on Bangla text.

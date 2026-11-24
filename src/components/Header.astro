@@ -1,0 +1,72 @@
+---
+import Icon from "./Icon.astro";
+import site from "../data/site.json";
+import { bn, url, waLink, telLink } from "../lib/utils";
+
+interface Props { transparent?: boolean }
+const { transparent = false } = Astro.props;
+const home = url("/");
+const nav = [
+  ["প্রজেক্ট", url("/projects/")],
+  ["আসন্ন প্রজেক্ট", url("/upcoming/")],
+  ["আমাদের কথা", url("/about/")],
+  ["অফার", home + "#offers"],
+  ["কিস্তি হিসাব", home + "#emi"],
+  ["প্রশ্নোত্তর", home + "#faq"],
+  ["যোগাযোগ", home + "#contact"],
+];
+const here = Astro.url.pathname;
+---
+<a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:rounded-full focus:bg-ink focus:px-5 focus:py-3 focus:text-cream">মূল লেখায় যান</a>
+<header id="hdr" class:list={["hdr fixed inset-x-0 top-0 z-50", { "is-solid": !transparent }]} data-transparent={transparent ? "" : undefined}>
+  <div class="container-x flex h-[72px] items-center justify-between gap-4">
+    <a href={home} class="flex items-center gap-3" aria-label={`${site.name} হোম`}>
+      <img src={url(site.logo_icon || site.logo)} alt="" class="h-11 w-11 rounded-full" width="44" height="44" />
+      <span class="leading-tight">
+        <span class="block font-display text-xl font-bold">{site.name}</span>
+        <span class="hdr-sub block text-[11px] font-medium tracking-[.2em] text-ink/55">{site.name_en.toUpperCase()}</span>
+      </span>
+    </a>
+    <nav class="hidden items-center gap-1 lg:flex" aria-label="মূল মেনু">
+      {nav.map(([t, h]) => <a aria-current={here === h ? "page" : undefined} class="nav-link aria-[current=page]:text-brass-d rounded-full px-3.5 py-2 text-[15px] font-medium opacity-90 transition hover:bg-ink/5 hover:opacity-100" href={h}>{t}</a>)}
+    </nav>
+    <div class="flex items-center gap-2">
+      <a href={telLink()} class="btn-brass hidden !min-h-11 !px-5 !py-2 sm:inline-flex"><Icon name="phone" class="h-4 w-4" /> <span class="num">{bn(site.phone)}</span></a>
+      <button id="menuBtn" class="menu-btn grid h-11 w-11 place-items-center rounded-full bg-ink/5 lg:hidden" aria-label="মেনু খুলুন" aria-expanded="false" aria-controls="mnav"><Icon name="menu" class="h-6 w-6" /></button>
+    </div>
+  </div>
+</header>
+
+<div id="mnav" class="fixed inset-0 z-[60] hidden" role="dialog" aria-modal="true" aria-label="মেনু">
+  <div class="absolute inset-0 bg-ink/50 backdrop-blur-sm" data-close></div>
+  <div class="absolute right-0 top-0 flex h-full w-[86%] max-w-sm flex-col bg-paper p-6 shadow-lift">
+    <div class="flex items-center justify-between">
+      <span class="font-display text-xl font-bold">মেনু</span>
+      <button class="grid h-11 w-11 place-items-center rounded-full bg-ink/5" data-close aria-label="বন্ধ করুন"><Icon name="x" class="h-6 w-6" /></button>
+    </div>
+    <nav class="mt-6 flex flex-col gap-1">
+      {nav.map(([t, h]) => <a data-close class="rounded-2xl px-4 py-3 text-lg font-medium hover:bg-ink/5" href={h}>{t}</a>)}
+    </nav>
+    <div class="mt-auto grid gap-3">
+      <a href={telLink()} class="btn-ink"><Icon name="phone" /> কল করুন</a>
+      <a href={waLink()} target="_blank" rel="noopener" class="btn-wa"><Icon name="wa" /> হোয়াটসঅ্যাপ</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const hdr = document.getElementById("hdr")!;
+  if (hdr.hasAttribute("data-transparent")) {
+    const onScroll = () => hdr.classList.toggle("is-solid", window.scrollY > 40);
+    addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  }
+  const m = document.getElementById("mnav")!, mb = document.getElementById("menuBtn")!;
+  const close = () => { m.classList.add("hidden"); mb.setAttribute("aria-expanded", "false"); document.body.style.overflow = ""; mb.focus(); };
+  mb.addEventListener("click", () => {
+    m.classList.remove("hidden"); mb.setAttribute("aria-expanded", "true"); document.body.style.overflow = "hidden";
+    (m.querySelector("a") as HTMLElement)?.focus();
+  });
+  m.querySelectorAll("[data-close]").forEach((el) => el.addEventListener("click", close));
+  addEventListener("keydown", (e) => { if (e.key === "Escape" && !m.classList.contains("hidden")) close(); });
+</script>
