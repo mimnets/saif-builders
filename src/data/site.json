@@ -1,11 +1,13 @@
 {
   "name": "সাইফ বিল্ডার্স",
   "name_en": "Saif Builders",
+  "tagline_en": "Premium Property",
   "slogan": "সততাই আমাদের মূলধন",
   "logo": "/img/logo-mark.png",
   "logo_icon": "/img/logo-icon.png",
   "phone": "01616100001",
   "whatsapp": "8801616100001",
+  "whatsapp_default": "আসসালামু আলাইকুম, সাইফ বিল্ডার্সের ফ্ল্যাট সম্পর্কে জানতে চাই।",
   "facebook": "https://www.facebook.com/saifbuildersbd",
   "email": "saifbuilders.bd@gmail.com",
   "address": "হোল্ডিং ১৪, শেখ মালেক টাওয়ার, মোক্তার বাড়ি রোড, আউচপাড়া, টঙ্গী (পশ্চিম), গাজীপুর-১৭১১",
@@ -14,14 +16,12 @@
   "owner_title": "স্বত্বাধিকারী",
   "footer_about": "টঙ্গী ও আশপাশের মানুষের জন্য সহজ কিস্তিতে নিজের ফ্ল্যাট। সততা, ঝামেলামুক্ত জমি আর সময়মতো হস্তান্তর, এটাই আমাদের কাজের ধরন।",
   "footer_note": "ছবি ও নকশা উপস্থাপনার জন্য, চূড়ান্ত নকশা অনুমোদিত প্ল্যান অনুযায়ী।",
-  "whatsapp_default": "আসসালামু আলাইকুম, সাইফ বিল্ডার্সের ফ্ল্যাট সম্পর্কে জানতে চাই।",
+  "theme": {
+    "surface": "bronze",
+    "accent": "deep",
+    "footer": "match"
+  },
   "seo_title": "সাইফ বিল্ডার্স | টঙ্গীতে সহজ কিস্তিতে নিজের ফ্ল্যাট",
   "seo_description": "আউচপাড়া, টঙ্গীতে ১০০০ থেকে ১৮৫০ বর্গফুটের ফ্ল্যাট, দাম ৩৫ থেকে ৭০ লাখ টাকা। ১০ থেকে ১৫ লাখ টাকা ডাউন পেমেন্ট আর মাসিক কিস্তিতে নিজের ফ্ল্যাট। সাইফ বিল্ডার্স, সততাই আমাদের মূলধন।",
-  "og_image": "/img/og.png",
-  "tagline_en": "Premium Property",
-  "theme": {
-    "surface": "black",
-    "accent": "logo",
-    "footer": "black"
-  }
+  "og_image": "/img/og.png"
 }
