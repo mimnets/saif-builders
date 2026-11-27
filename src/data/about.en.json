@@ -1,0 +1,34 @@
+{
+  "seo_title": "About us",
+  "seo_description": "Saif Builders: quality flats on dispute-free land in Auchpara, Tongi, with transparent accounts and on-time handover. Our mission, vision and values.",
+  "hero": {
+    "eyebrow": "About us",
+    "title": "Built for the people of Tongi, by the people of Tongi",
+    "text": "Saif Builders is a housing company in Auchpara, Tongi. We want working and middle-class families to live in a flat of their own instead of paying rent. So we offer flats with a small down payment and easy installments, and keep the accounts clear at every step."
+  },
+  "story": {
+    "heading": "How we work",
+    "text": "Every project starts with checking the land papers. We do not take on land with family disputes, court cases or unclear documents.\n\nDuring construction, everything from rods, cement and bricks to fittings is bought from good brands. Buyers get photos and news of the work in a WhatsApp group, and we hold meetings with everyone when needed.\n\nHanding over the flat by the date written in the contract is our biggest promise."
+  },
+  "mission": {
+    "heading": "Our mission",
+    "text": "To put the keys of their own flat in every family's hands, exactly when promised, through affordable installments, dispute-free land and transparent dealings."
+  },
+  "vision": {
+    "heading": "Our vision",
+    "text": "To become a housing company in Tongi and Gazipur whose name alone earns people's trust. One where our buyers are our biggest promoters."
+  },
+  "values": {
+    "heading": "The principles we live by",
+    "items": [
+      { "icon": "shield", "title": "Honesty", "text": "What is written on paper is what gets done. No hidden charges, no tricks." },
+      { "icon": "doc", "title": "Transparency", "text": "Buyers keep the receipt and account of every installment. All land papers are shown before booking." },
+      { "icon": "clock", "title": "Respect for time", "text": "Handover on the contract date. If anything may cause a delay, everyone is told in advance." },
+      { "icon": "brick", "title": "Quality construction", "text": "We never cut quality to save cost. Good-brand materials, built with care." }
+    ]
+  },
+  "owner": {
+    "eyebrow": "A word from the proprietor",
+    "message": "I oversee every project myself. When a family comes to us with a lifetime of savings, the value of that trust cannot be measured in money. That is why I never touch land whose papers are not clean. And I hand over the keys on the date I promise. Our past buyers are the proof."
+  }
+}

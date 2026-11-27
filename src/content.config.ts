@@ -4,7 +4,7 @@ import { z } from "astro/zod";
 
 // Edited through Sveltia CMS (/admin) → "প্রজেক্ট". Field names must match public/admin/config.yml.
 const projects = defineCollection({
-  loader: glob({ pattern: "*.md", base: "./src/content/projects" }),
+  loader: glob({ pattern: ["*.md", "!*.*.md"], base: "./src/content/projects" }),
   schema: z.object({
     title: z.string(),
     name_en: z.string().optional().default(""),
@@ -39,4 +39,15 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { projects };
+// English translations: src/content/projects/<id>.en.md, same id as the Bangla file.
+// Only translated fields are needed; missing ones fall back to the Bangla file (src/lib/projects.ts).
+const projects_en = defineCollection({
+  loader: glob({
+    pattern: "*.en.md",
+    base: "./src/content/projects",
+    generateId: ({ entry }) => entry.replace(/\.en\.md$/, ""),
+  }),
+  schema: z.record(z.string(), z.any()),
+});
+
+export const collections = { projects, projects_en };

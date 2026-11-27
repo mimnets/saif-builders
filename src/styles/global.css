@@ -134,6 +134,18 @@ details[open] .faq-plus { transform: rotate(45deg); }
 .hdr:not(.is-solid) .nav-link:hover { background: rgb(255 255 255 / .1); }
 .hdr:not(.is-solid) .menu-btn { background: rgb(255 255 255 / .12); }
 
+/* language switch: dark pill on the light header, white pill over the hero photo */
+.lang-switch {
+  @apply inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-4 py-2 text-[15px] text-brass-l shadow-soft ring-2 ring-brass transition hover:bg-ink-2 active:scale-[.98];
+}
+.hdr:not(.is-solid) .lang-switch { @apply bg-white text-ink ring-brass hover:bg-cream; }
+@media (max-width: 639px) { .lang-switch { @apply gap-1.5 px-3 text-[14px]; } }
+@media (max-width: 359px) { .lang-switch svg { display: none; } }
+
+/* English pages: Latin text reads well tighter than Bangla */
+html[lang="en"] body { line-height: 1.65; }
+html[lang="en"] h1, html[lang="en"] h2, html[lang="en"] h3 { letter-spacing: -0.01em; }
+
 /* ------------------------------------------------------------------
    Switchable theme (set in the CMS, rendered as attributes on <html>)
    data-surface: black | espresso | graphite | bronze | light

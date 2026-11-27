@@ -1,0 +1,43 @@
+{
+  "eyebrow": "Current offers",
+  "heading": "Extra benefits when you book now",
+  "intro": "These offers are for a limited time. Visit our office or call us for the full terms.",
+  "deadline_label": "Offer ends in",
+  "items": [
+    {
+      "icon": "tag",
+      "title": "Early booking discount",
+      "text": "The first 20 buyers to book get a special discount of up to Tk 1 lakh.",
+      "badge": "Limited time",
+      "active": true
+    },
+    {
+      "icon": "cash",
+      "title": "Cashback offer",
+      "text": "2% cashback on the total price when you pay in full.",
+      "badge": "Ready flats",
+      "active": true
+    },
+    {
+      "icon": "gift",
+      "title": "Interior voucher",
+      "text": "A Tk 25,000 furniture/interior voucher when you sign the contract.",
+      "badge": "All projects",
+      "active": true
+    },
+    {
+      "icon": "ticket",
+      "title": "Monthly raffle draw",
+      "text": "A draw every month among that month's buyers. Prizes: AC, fridge, smart TV.",
+      "badge": "Every month",
+      "active": true
+    },
+    {
+      "icon": "users",
+      "title": "Referral gift",
+      "text": "If someone books through your referral, you get a Tk 20,000 gift voucher.",
+      "badge": "For everyone",
+      "active": true
+    }
+  ]
+}
