@@ -24,6 +24,17 @@ Vercel builds and deploys every push to `main` (preview deployments for other br
 | Brand colors & fonts | `src/styles/global.css` (`@theme`) | (code only) |
 | CMS fields | `public/admin/config.yml` | (code only) |
 
+## English version
+
+Every page exists in Bangla (`/…`) and English (`/en/…`). The header has a language button ("English" / "বাংলা")
+that opens the same page in the other language; it is also in the mobile menu and the footer.
+
+- English content sits next to the Bangla file: `src/data/<name>.en.json`, `src/content/projects/<id>.en.md`.
+  It only needs the translated text: images, numbers, phone, status, order etc. are always taken from the Bangla file.
+- In the CMS every text field has a Bangla/English switch (Sveltia i18n, see `i18n:` in `public/admin/config.yml`).
+- Fixed interface text (buttons, labels, form messages) is in `src/i18n/ui.ts` for both languages.
+- Pages are written once in `src/views/`; `src/pages/` and `src/pages/en/` only route to them.
+
 Project URL = file name: `src/content/projects/tvs.md` → `/projects/tvs/`.
 Old links `project.html?id=tvs` redirect automatically.
 

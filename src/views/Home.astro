@@ -1,0 +1,466 @@
+---
+import Base from "../layouts/Base.astro";
+import Icon from "../components/Icon.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import { url, waLink as wl, telLink, mapsLink, mapsEmbed, initial } from "../lib/utils";
+import { data, href, langOf, num, money as mny, t as tr } from "../lib/i18n";
+import { getProjects } from "../lib/projects";
+
+const lang = langOf(Astro.url);
+const t = tr(lang);
+const site = data("site", lang);
+const home = data("home", lang);
+const offers = data("offers", lang);
+const bn = (n: string | number) => num(lang, n);
+const money = (n: number) => mny(lang, n);
+const waLink = (msg?: string) => wl(msg, lang);
+const projects = await getProjects(lang);
+const featured = projects.filter((p) => p.data.featured);
+const { hero, why, services, emi, area, reviews, faq, contact, cta } = home;
+const activeOffers = offers.items.filter((o) => o.active);
+const readyHref = href(lang, services.ready.link_project ? `/projects/${services.ready.link_project}/` : "/projects/");
+const sizes = [...new Set(projects.flatMap((p) => p.data.floor_plans.map((f) => f.size)))].sort((a, b) => a - b);
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faq.items.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+};
+---
+<Base transparentHeader>
+  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+
+  <!-- ================= HERO ================= -->
+  <section class="relative isolate flex min-h-[100svh] items-end overflow-hidden bg-ink pb-28 pt-32 sm:items-center sm:pb-24">
+    <div id="heroSlides" class="absolute inset-0 -z-10">
+      {hero.slides.map((s, i) => (
+        <img class:list={["hero-slide absolute inset-0 h-full w-full object-cover", { "is-active": i === 0 }]} src={url(s)} alt="" width="1600" height="1000" loading={i === 0 ? "eager" : "lazy"} fetchpriority={i === 0 ? "high" : "auto"} />
+      ))}
+    </div>
+    <div class="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/75 to-ink/25 sm:bg-gradient-to-r sm:from-ink/95 sm:via-ink/75 sm:to-ink/10"></div>
+
+    <div class="container-x">
+      <div class="max-w-2xl text-white">
+        <span class="chip bg-white/10 px-4 py-1.5 text-[14px] text-white ring-1 ring-white/20 backdrop-blur"><span class="h-2 w-2 rounded-full bg-brass"></span> {hero.badge}</span>
+        <h1 class="mt-6 text-[2.5rem] font-bold !leading-[1.25] text-white sm:text-6xl">
+          {hero.title}<br /><span class="text-brass">{hero.title_highlight}</span>
+        </h1>
+        <p class="mt-5 max-w-xl text-lg !leading-[1.9] text-white/85 sm:text-xl">{hero.text}</p>
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          <a href={waLink(hero.primary_message)} target="_blank" rel="noopener" class="btn-brass !px-7 text-lg">{hero.primary_cta} <Icon name="arrow" /></a>
+          <a href={href(lang, "/projects/")} class="btn-ghost !px-7 text-lg">{hero.secondary_cta}</a>
+        </div>
+      </div>
+
+      <dl class="mt-12 grid max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-3xl bg-white/10 ring-1 ring-white/15 backdrop-blur-md sm:grid-cols-4">
+        {hero.stats.map((s) => (
+          <div class="flex flex-col-reverse bg-ink/40 p-5">
+            <dt class="text-[14px] text-white/70">{s.label}</dt>
+            <dd class="font-display text-3xl font-bold text-white">{s.value}<span class="text-lg font-medium text-white/70">{s.suffix}</span></dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+    {hero.slides.length > 1 && <div class="absolute bottom-28 right-6 hidden gap-2 sm:bottom-10 sm:flex" id="heroDots">
+      {hero.slides.map((_, i) => <button aria-label={`${t.slide} ${bn(i + 1)}`} class:list={["h-2 rounded-full transition-all", i ? "w-2 bg-white/40" : "w-8 bg-brass"]}></button>)}
+    </div>}
+  </section>
+
+  <!-- ================= WHY US ================= -->
+  <section id="features" class="section relative">
+    <div class="container-x grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <div class="reveal lg:sticky lg:top-28 lg:col-span-5 lg:self-start">
+        <span class="eyebrow">{why.eyebrow}</span>
+        <h2 class="h-section">{why.heading}</h2>
+        <p class="lead mt-5">{why.text}</p>
+        <figure class="mt-8 rounded-3xl surface p-7">
+          <svg class="h-8 w-8 text-brass" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 7h4v4H8c0 2 1 3 3 3v2c-3 0-5-2-5-5V7zm8 0h4v4h-3c0 2 1 3 3 3v2c-3 0-5-2-5-5V7z"/></svg>
+          <blockquote class="mt-3 font-display text-xl !leading-[1.7] text-on-night sm:text-2xl">{why.quote}</blockquote>
+          <figcaption class="mt-5 flex items-center gap-3 text-[15px] text-on-night-2/75">
+            {why.owner_photo
+              ? <img src={url(why.owner_photo)} alt="" class="h-12 w-12 rounded-full object-cover ring-2 ring-brass" width="48" height="48" loading="lazy" />
+              : <span class="grid h-12 w-12 place-items-center rounded-full bg-brass font-display text-lg font-bold text-ink">{initial(site.owner)}</span>}
+            <span><b class="block font-semibold text-on-night">{site.owner}</b>{site.owner_title}</span>
+          </figcaption>
+        </figure>
+        <a href={href(lang, "/about/")} class="mt-6 inline-flex items-center gap-2 font-semibold text-brass-d hover:text-ink">{t.learn_about} <Icon name="arrow" /></a>
+      </div>
+      <div class="grid auto-rows-fr gap-5 self-start sm:grid-cols-2 lg:col-span-7">
+        {why.items.map((f) => (
+          <div class="reveal card group flex h-full flex-col p-7 transition hover:-translate-y-1 hover:shadow-lift">
+            <span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-cream text-brass-d transition group-hover:bg-brass group-hover:text-ink"><Icon name={f.icon} class="h-7 w-7" /></span>
+            <h3 class="mt-5 text-xl font-bold">{f.title}</h3>
+            <p class="mt-2 text-base leading-[1.85] text-ink/75">{f.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SERVICES ================= -->
+  <section id="services" class="section bg-cream">
+    <div class="container-x">
+      <div class="reveal mx-auto max-w-2xl text-center">
+        <span class="eyebrow justify-center">{services.eyebrow}</span>
+        <h2 class="h-section">{services.heading}</h2>
+        <p class="lead mt-4">{services.text}</p>
+      </div>
+      <div class="mt-14 grid gap-6 lg:grid-cols-2">
+        <article class="reveal card relative overflow-hidden p-8 sm:p-10">
+          <span class="chip status-booking">{services.installment.badge}</span>
+          <h3 class="mt-4 text-2xl font-bold sm:text-3xl">{services.installment.title}</h3>
+          <p class="mt-3 text-ink/75">{services.installment.text}</p>
+          <ul class="mt-7 grid gap-4 sm:grid-cols-2">
+            {services.installment.facts.map((f) => <li class="rounded-2xl bg-paper p-4"><span class="text-[14px] text-ink/65">{f.label}</span><b class="mt-1 block font-display text-2xl">{f.value}</b></li>)}
+          </ul>
+          <a href="#emi" class="btn-ink mt-8">{t.calc_emi} <Icon name="arrow" /></a>
+        </article>
+        <article class="reveal relative overflow-hidden rounded-3xl surface p-8 sm:p-10">
+          {services.ready.image && <img src={url(services.ready.image)} alt="" class="absolute inset-0 h-full w-full object-cover opacity-20" loading="lazy" />}
+          <div class="relative">
+            <span class="chip status-ready">{services.ready.badge}</span>
+            <h3 class="mt-4 text-2xl font-bold text-on-night sm:text-3xl">{services.ready.title}</h3>
+            <p class="mt-3 text-on-night-2/80">{services.ready.text}</p>
+            <ul class="mt-7 grid gap-4 sm:grid-cols-2">
+              {services.ready.facts.map((f, i) => <li class:list={["rounded-2xl bg-on-night/5 p-4 ring-1 ring-on-night/10", { "sm:col-span-2": i === services.ready.facts.length - 1 && services.ready.facts.length % 2 }]}><span class="text-[14px] text-on-night-2/65">{f.label}</span><b class="mt-1 block font-display text-2xl text-on-night">{f.value}</b></li>)}
+            </ul>
+            <a href={readyHref} class="btn-brass mt-8">{t.see_ready} <Icon name="arrow" /></a>
+          </div>
+        </article>
+      </div>
+
+      <div class="reveal mt-20">
+        <h3 class="text-center text-2xl font-bold sm:text-3xl">{services.steps_heading}</h3>
+        <ol class="mt-10 grid gap-5 md:grid-cols-4">
+          {services.steps.map((s, i) => (
+            <li class="relative rounded-3xl bg-white p-6 shadow-soft ring-1 ring-ink/5">
+              <span class="font-display text-5xl font-bold text-brass/50" aria-hidden="true">{bn(String(i + 1).padStart(2, "0"))}</span>
+              <h4 class="mt-2 text-lg font-bold">{s.title}</h4>
+              <p class="mt-1 text-base leading-[1.8] text-ink/75">{s.text}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROJECTS ================= -->
+  <section id="projects" class="section">
+    <div class="container-x">
+      <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+        <div class="reveal">
+          <span class="eyebrow">{home.projects.eyebrow}</span>
+          <h2 class="h-section">{home.projects.heading}</h2>
+        </div>
+        <a href={href(lang, "/projects/")} class="btn-outline self-start sm:self-auto">{t.nav.all_projects} <Icon name="arrow" /></a>
+      </div>
+      <div class="relative mt-10" data-carousel>
+        <div class="snap-row -mx-5 flex scroll-px-5 gap-6 overflow-x-auto px-5 pb-4 sm:-mx-8 sm:scroll-px-8 sm:px-8">
+          {featured.map((p) => <div class="w-[85%] shrink-0 sm:w-[46%] lg:w-[31.5%]"><ProjectCard project={p} /></div>)}
+        </div>
+        <button data-prev class="absolute -left-3 top-1/3 hidden h-12 w-12 place-items-center rounded-full bg-white shadow-lift ring-1 ring-ink/5 hover:bg-cream lg:grid" aria-label={t.prev_project}><Icon name="left" class="h-6 w-6" /></button>
+        <button data-next class="absolute -right-3 top-1/3 hidden h-12 w-12 place-items-center rounded-full bg-white shadow-lift ring-1 ring-ink/5 hover:bg-cream lg:grid" aria-label={t.next_project}><Icon name="right" class="h-6 w-6" /></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= OFFERS ================= -->
+  {offers.show && activeOffers.length > 0 && (
+  <section id="offers" class="section relative overflow-hidden surface">
+    <div class="pointer-events-none absolute -right-40 -top-40 h-[480px] w-[480px] rounded-full bg-brass/20 blur-3xl"></div>
+    <div class="container-x relative grid gap-10 lg:grid-cols-12">
+      <div class="reveal lg:sticky lg:top-28 lg:col-span-4 lg:self-start">
+        <span class="eyebrow eyebrow-light">{offers.eyebrow}</span>
+        <h2 class="mt-3 text-3xl font-bold text-on-night sm:text-4xl">{offers.heading}</h2>
+        <p class="mt-4 text-on-night-2/75">{offers.intro}</p>
+        {offers.deadline && (
+          <div class="mt-8 rounded-3xl bg-on-night/5 p-6 ring-1 ring-on-night/10" id="countdownBox" data-deadline={offers.deadline} data-labels={JSON.stringify(t.countdown)}>
+            <p class="text-[14px] text-on-night-2/70">{offers.deadline_label}</p>
+            <div class="num mt-3 grid grid-cols-4 gap-2 text-center" id="countdown"></div>
+          </div>
+        )}
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={waLink(t.offer_msg)} target="_blank" rel="noopener" class="btn-brass whitespace-nowrap"><Icon name="wa" /> {t.offer_ask}</a>
+          <a href={telLink()} class="btn-ghost-night num whitespace-nowrap"><Icon name="phone" /> {bn(site.phone)}</a>
+        </div>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2 lg:col-span-8">
+        {activeOffers.map((o, i) => (
+          <div class:list={["reveal relative overflow-hidden rounded-3xl p-6 ring-1 ring-on-night/10 transition", i === 0 ? "bg-gradient-to-br from-brass/25 to-on-night/[.03] sm:col-span-2" : "bg-on-night/[.04] hover:bg-on-night/[.07]"]}>
+            <div class="flex items-start justify-between gap-4">
+              <span class="grid h-12 w-12 place-items-center rounded-2xl bg-brass text-ink"><Icon name={o.icon} class="h-6 w-6" /></span>
+              {o.badge && <span class="chip bg-on-night/10 text-on-night-2/85">{o.badge}</span>}
+            </div>
+            <h3 class="mt-5 text-xl font-bold text-on-night">{o.title}</h3>
+            <p class="mt-2 text-on-night-2/80">{o.text}</p>
+            <p class="mt-4 text-[13px] text-on-night-2/50">{t.terms}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+  )}
+
+  <!-- ================= EMI ================= -->
+  <section id="emi" class="section">
+    <div class="container-x grid items-center gap-12 lg:grid-cols-2">
+      <div class="reveal">
+        <span class="eyebrow">{emi.eyebrow}</span>
+        <h2 class="h-section">{emi.heading}</h2>
+        <p class="lead mt-4">{emi.text}</p>
+        <div class="mt-8 grid gap-4 sm:grid-cols-2">
+          {emi.tips.map((t) => (
+            <div class="flex gap-4 rounded-2xl bg-cream p-5">
+              <span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-white text-brass-d"><Icon name={t.icon} /></span>
+              <p class="text-[15px] leading-7 text-ink/75"><b class="block text-ink">{t.title}</b>{t.text}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <form id="emiForm" class="reveal card p-6 sm:p-8" data-years={JSON.stringify(emi.years)} data-year={emi.years_default} data-msg={t.emi_msg}>
+        <label class="block"><span class="flex justify-between text-[15px] font-semibold">{t.emi_price} <output id="oPrice" class="num text-brass-d">৳ {money(emi.price_default)}</output></span>
+          <input id="iPrice" type="range" min={emi.price_min} max={emi.price_max} step="100000" value={emi.price_default} class="mt-3 w-full accent-[#CFB06D]" /></label>
+        <label class="mt-6 block"><span class="flex justify-between text-[15px] font-semibold">{t.emi_down} <output id="oDown" class="num text-brass-d">৳ {money(emi.down_default)}</output></span>
+          <input id="iDown" type="range" min={emi.down_min} max={emi.down_max} step="50000" value={emi.down_default} class="mt-3 w-full accent-[#CFB06D]" /></label>
+        <fieldset class="mt-6"><legend class="text-[15px] font-semibold">{t.emi_term}</legend>
+          <div class="mt-3 grid grid-cols-4 gap-2" id="yearBtns">
+            {emi.years.map((y) => <button type="button" data-y={y} aria-pressed={y === emi.years_default ? "true" : "false"} class="rounded-2xl py-3 font-semibold ring-1 ring-ink/10 transition hover:ring-ink/30 aria-pressed:bg-ink aria-pressed:text-cream aria-pressed:ring-ink">{bn(y)} {t.years}</button>)}
+          </div>
+        </fieldset>
+        <div class="mt-8 rounded-3xl surface p-6" aria-live="polite">
+          <p class="text-[14px] text-on-night-2/70">{t.emi_monthly}</p>
+          <p class="num mt-1 font-display text-4xl font-bold text-on-night sm:text-5xl">৳ <span id="oEmi">{bn(0)}</span></p>
+          <p class="num mt-3 text-[14px] text-on-night-2/70">{t.emi_rest}: ৳ <span id="oRest"></span> · {t.emi_total} <span id="oMonths"></span> {t.months}</p>
+        </div>
+        <p class="mt-4 text-[13px] leading-6 text-ink/60">{emi.note}</p>
+        <a id="emiWa" href={waLink()} target="_blank" rel="noopener" class="btn-wa mt-5 w-full"><Icon name="wa" /> {t.emi_cta}</a>
+      </form>
+    </div>
+  </section>
+
+  <!-- ================= AREA ================= -->
+  <section id="area" class="section bg-cream">
+    <div class="container-x">
+      <div class="reveal max-w-2xl">
+        <span class="eyebrow">{area.eyebrow}</span>
+        <h2 class="h-section">{area.heading}</h2>
+        <p class="lead mt-4">{area.text}</p>
+      </div>
+      <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {area.items.map((a) => (
+          <div class="reveal flex gap-4 rounded-3xl bg-white p-6 shadow-soft ring-1 ring-ink/5">
+            <span class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-sage/10 text-sage"><Icon name={a.icon} class="h-6 w-6" /></span>
+            <div><h3 class="text-lg font-bold">{a.title}</h3><p class="mt-1 text-[15px] leading-7 text-ink/75">{a.text}</p></div>
+          </div>
+        ))}
+      </div>
+      <div class="reveal mt-16 rounded-[2rem] bg-white p-8 shadow-soft ring-1 ring-ink/5 sm:p-10">
+        <h3 class="text-2xl font-bold">{area.who_heading}</h3>
+        <p class="mt-2 text-ink/70">{area.who_text}</p>
+        <ul class="mt-6 flex flex-wrap gap-2">
+          {area.who.map((w) => <li class="chip bg-cream px-4 py-2 text-[15px] text-ink/85"><Icon name="check" class="h-4 w-4 text-sage" /> {w}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= REVIEWS ================= -->
+  <section id="reviews" class="section">
+    <div class="container-x">
+      <div class="reveal mx-auto max-w-2xl text-center">
+        <span class="eyebrow justify-center">{reviews.eyebrow}</span>
+        <h2 class="h-section">{reviews.heading}</h2>
+      </div>
+      <div class="mt-14 grid gap-6 lg:grid-cols-3">
+        {reviews.items.map((r) => r.name ? (
+          <figure class="reveal card flex flex-col p-8">
+            <div class="flex gap-1 text-brass" aria-label={t.stars}>{[1, 2, 3, 4, 5].map(() => <Icon name="star" />)}</div>
+            <blockquote class="mt-5 flex-1 text-lg leading-[1.9] text-ink/85">{r.text}</blockquote>
+            <figcaption class="mt-6 flex items-center gap-3 border-t border-ink/5 pt-5">
+              {r.photo
+                ? <img src={url(r.photo)} alt="" class="h-12 w-12 rounded-full object-cover" width="48" height="48" loading="lazy" />
+                : <span class="grid h-12 w-12 place-items-center rounded-full bg-cream font-display text-lg font-bold text-brass-d">{initial(r.name)}</span>}
+              <span><b class="block">{r.name}</b><span class="text-[14px] text-ink/65">{r.role}</span></span>
+            </figcaption>
+          </figure>
+        ) : (
+          <figure class="reveal flex flex-col rounded-3xl surface p-8">
+            <span class="grid h-12 w-12 place-items-center rounded-2xl bg-wa text-white"><Icon name="chat" class="h-6 w-6" /></span>
+            <blockquote class="mt-5 flex-1 text-lg leading-[1.9] text-on-night-2/90">{r.text}</blockquote>
+            <figcaption class="mt-6 border-t border-on-night/10 pt-5 text-[14px] text-on-night-2/70">{r.role}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FAQ ================= -->
+  <section id="faq" class="section bg-cream">
+    <div class="container-x grid gap-12 lg:grid-cols-12">
+      <div class="reveal lg:sticky lg:top-28 lg:col-span-4 lg:self-start">
+        <span class="eyebrow">{faq.eyebrow}</span>
+        <h2 class="h-section">{faq.heading}</h2>
+        <p class="mt-4 text-ink/75">{faq.text}</p>
+
+        <!-- help card: stays beside the questions while reading (sticky on desktop) -->
+        <div class="surface mt-8 rounded-3xl p-6">
+          <div class="flex items-center gap-3">
+            <img src={url(why.owner_photo || site.logo_icon || site.logo)} alt="" width="48" height="48" class="h-12 w-12 rounded-full object-cover ring-2 ring-brass" loading="lazy" />
+            <p class="leading-6"><b class="block font-display text-lg text-on-night">{faq.help_heading}</b><span class="text-[14px] text-on-night-2/75">{faq.help_text}</span></p>
+          </div>
+          <div class="mt-5 grid gap-2">
+            <a href={waLink(faq.help_message)} target="_blank" rel="noopener" class="btn-wa"><Icon name="wa" /> {t.faq_wa}</a>
+            <a href={telLink()} class="btn-ghost-night num"><Icon name="phone" /> {bn(site.phone)}</a>
+          </div>
+          {faq.office_hours && <p class="mt-4 flex items-center gap-2 text-[14px] text-on-night-2/75"><Icon name="clock" class="h-4 w-4 shrink-0 text-night-accent" /> {faq.office_hours}</p>}
+        </div>
+
+        <ul class="mt-4 grid gap-2 text-[15px] font-semibold">
+          <li><a href="#emi" class="flex items-center justify-between rounded-2xl bg-white px-4 py-3 ring-1 ring-ink/5 transition hover:ring-brass/60"><span class="flex items-center gap-2"><Icon name="wallet" class="h-5 w-5 text-brass-d" /> {t.faq_emi}</span><Icon name="arrow" class="h-4 w-4" /></a></li>
+          <li><a href="#contact" class="flex items-center justify-between rounded-2xl bg-white px-4 py-3 ring-1 ring-ink/5 transition hover:ring-brass/60"><span class="flex items-center gap-2"><Icon name="pin" class="h-5 w-5 text-brass-d" /> {t.faq_visit}</span><Icon name="arrow" class="h-4 w-4" /></a></li>
+        </ul>
+      </div>
+      <div class="space-y-3 lg:col-span-8">
+        {faq.items.map((f, i) => (
+          <details class="reveal group rounded-3xl bg-white p-6 shadow-soft ring-1 ring-ink/5 open:ring-brass/50" open={i === 0}>
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold">{f.q}
+              <span class="faq-plus grid h-9 w-9 shrink-0 place-items-center rounded-full bg-cream text-2xl leading-none transition" aria-hidden="true">+</span></summary>
+            <p class="mt-3 leading-[1.9] text-ink/80">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CONTACT ================= -->
+  <section id="contact" class="section">
+    <div class="container-x grid gap-8 lg:grid-cols-5">
+      <div class="reveal card p-6 sm:p-8 lg:col-span-2">
+        <span class="eyebrow">{contact.eyebrow}</span>
+        <h2 class="mt-3 text-3xl font-bold">{contact.heading}</h2>
+        <p class="mt-2 text-ink/70">{contact.text}</p>
+        <form id="leadForm" class="mt-6 grid gap-4" data-tpl={JSON.stringify({ tpl: t.form.template, any: t.form.any, nd: t.form.not_decided, msg: t.form.default_msg })}>
+          <label class="sr-only" for="lf-name">{t.form.name}</label>
+          <input class="field" id="lf-name" name="name" required placeholder={t.form.name} autocomplete="name" />
+          <label class="sr-only" for="lf-phone">{t.form.phone}</label>
+          <input class="field" id="lf-phone" name="phone" required placeholder={t.form.phone} inputmode="tel" autocomplete="tel" />
+          <label class="sr-only" for="lf-project">{t.form.project}</label>
+          <select class="field" id="lf-project" name="project">
+            <option value="">{t.form.project_ph}</option>
+            {projects.map((p) => <option>{p.data.title}</option>)}
+          </select>
+          <label class="sr-only" for="lf-size">{t.form.size}</label>
+          <select class="field" id="lf-size" name="size">
+            <option value="">{t.form.size}</option>
+            {sizes.map((s) => <option>{bn(s)} {t.sqft}</option>)}
+            <option>{t.form.undecided}</option>
+          </select>
+          <label class="sr-only" for="lf-msg">{t.form.msg}</label>
+          <textarea class="field" id="lf-msg" name="msg" rows="3" placeholder={t.form.msg_ph}></textarea>
+          <button class="btn-wa" type="submit"><Icon name="wa" /> {t.form.send}</button>
+        </form>
+      </div>
+      <div class="reveal flex flex-col gap-4 lg:col-span-3">
+        <div class="relative overflow-hidden rounded-3xl bg-cream shadow-soft ring-1 ring-ink/5">
+          <a href={mapsLink(site.map_query)} target="_blank" rel="noopener" class="absolute inset-0 grid place-items-center text-center font-semibold text-ink/65">{t.map_open}</a>
+          <iframe title={t.office_location(site.name)} class="relative h-[320px] w-full sm:h-[380px]" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src={mapsEmbed(site.map_query)}></iframe>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-3">
+          {[
+            ["pin", t.office, site.address, mapsLink(site.map_query)],
+            ["phone", t.phone, bn(site.phone), telLink()],
+            ["fb", t.facebook, t.fb_message, site.facebook],
+          ].filter(([, , , h]) => h).map(([i, t, d, h]) => (
+            <a href={h} target={h.startsWith("http") ? "_blank" : undefined} rel={h.startsWith("http") ? "noopener" : undefined} class="card group flex flex-col p-5 transition hover:shadow-lift">
+              <span class="grid h-11 w-11 place-items-center rounded-xl bg-cream text-brass-d group-hover:bg-brass group-hover:text-ink"><Icon name={i} /></span>
+              <span class="mt-3 text-[14px] text-ink/60">{t}</span><span class="font-semibold leading-7">{d}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CTA ================= -->
+  <section class="px-5 pb-20 sm:px-8">
+    <div class="reveal relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-brass px-6 py-14 text-center sm:px-16 sm:py-20">
+      {cta.image && <img src={url(cta.image)} alt="" class="absolute inset-0 h-full w-full object-cover opacity-[.08] mix-blend-multiply" loading="lazy" />}
+      <div class="relative">
+        <h2 class="mx-auto max-w-3xl text-3xl font-bold !leading-[1.3] sm:text-5xl">{cta.heading}</h2>
+        <p class="mx-auto mt-4 max-w-xl text-lg text-ink/80">{cta.text}</p>
+        <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <a href={telLink()} class="btn-ink !px-8 text-lg"><Icon name="phone" /> {t.call_now}</a>
+          <a href={waLink()} target="_blank" rel="noopener" class="btn bg-white !px-8 text-lg text-ink hover:bg-paper"><Icon name="wa" /> {t.whatsapp_msg}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { bn, money, waLink, fill } from "../lib/client";
+  const $ = <T extends HTMLElement = HTMLElement>(s: string) => document.querySelector<T>(s)!;
+
+  /* hero slideshow */
+  const slides = [...document.querySelectorAll<HTMLElement>(".hero-slide")];
+  const dots = document.getElementById("heroDots");
+  if (slides.length > 1 && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    let cur = 0, timer = 0;
+    const go = (n: number) => {
+      slides[cur].classList.remove("is-active"); if (dots) dots.children[cur].className = "h-2 w-2 rounded-full bg-white/40 transition-all";
+      cur = (n + slides.length) % slides.length;
+      slides[cur].classList.add("is-active"); if (dots) dots.children[cur].className = "h-2 w-8 rounded-full bg-brass transition-all";
+    };
+    const start = () => { clearInterval(timer); timer = window.setInterval(() => go(cur + 1), 5500); };
+    dots && [...dots.children].forEach((d, i) => d.addEventListener("click", () => { go(i); start(); }));
+    start();
+  }
+
+  /* offer countdown (only when a deadline is set in the CMS) */
+  const cdBox = document.getElementById("countdownBox");
+  if (cdBox) {
+    const end = new Date(cdBox.dataset.deadline!).getTime();
+    const cd = $("#countdown");
+    const labels: string[] = JSON.parse(cdBox.dataset.labels!);
+    const tick = () => {
+      const s = Math.max(0, (end - Date.now()) / 1000);
+      if (s <= 0) { cdBox.hidden = true; return; }
+      const vals = [Math.floor(s / 86400), Math.floor((s % 86400) / 3600), Math.floor((s % 3600) / 60), Math.floor(s % 60)];
+      const parts = vals.map((v, i) => [v, labels[i]] as [number, string]);
+      cd.innerHTML = parts.map(([v, l]) => `<div class="rounded-2xl bg-night-2 py-3"><b class="block font-display text-2xl text-on-night">${bn(String(v).padStart(2, "0"))}</b><span class="text-xs text-on-night-2/60">${l}</span></div>`).join("");
+    };
+    tick(); setInterval(tick, 1000);
+  }
+
+  /* EMI calculator */
+  const form = $<HTMLFormElement>("#emiForm");
+  let yr = +form.dataset.year!;
+  const calc = () => {
+    const price = +$<HTMLInputElement>("#iPrice").value, down = Math.min(+$<HTMLInputElement>("#iDown").value, price);
+    const rest = price - down, months = yr * 12;
+    $("#oPrice").textContent = "৳ " + money(price);
+    $("#oDown").textContent = "৳ " + money(down);
+    $("#oEmi").textContent = money(rest / months);
+    $("#oRest").textContent = money(rest);
+    $("#oMonths").textContent = bn(months);
+    $<HTMLAnchorElement>("#emiWa").href = waLink(fill(form.dataset.msg!, { price: money(price), down: money(down), years: bn(yr) }));
+  };
+  $("#yearBtns").addEventListener("click", (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLElement>("[data-y]"); if (!b) return;
+    yr = +b.dataset.y!;
+    document.querySelectorAll("#yearBtns [data-y]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    calc();
+  });
+  form.addEventListener("input", calc);
+  form.addEventListener("submit", (e) => e.preventDefault());
+  calc();
+
+  /* lead form → WhatsApp */
+  $<HTMLFormElement>("#leadForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const el = e.target as HTMLFormElement, f = new FormData(el);
+    const c = JSON.parse(el.dataset.tpl!);
+    const v = (k: string) => String(f.get(k) || "");
+    const msg = fill(c.tpl, { name: v("name"), phone: v("phone"), project: v("project") || c.any, size: v("size") || c.nd, msg: v("msg") || c.msg });
+    window.open(waLink(msg), "_blank", "noopener");
+  });
+</script>

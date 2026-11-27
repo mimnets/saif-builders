@@ -1,0 +1,58 @@
+---
+import Base from "../layouts/Base.astro";
+import Icon from "../components/Icon.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import { STATUS } from "../lib/utils";
+import { href, langOf, num, t as tr } from "../lib/i18n";
+import { getProjects } from "../lib/projects";
+
+const lang = langOf(Astro.url);
+const t = tr(lang);
+const bn = (n: string | number) => num(lang, n);
+const projects = await getProjects(lang);
+const tabs = [["all", t.nav.all_projects], ...Object.keys(STATUS).map((k) => [k, t.status[k as keyof typeof STATUS]])];
+const count = (k: string) => (k === "all" ? projects.length : projects.filter((p) => p.data.status === k).length);
+---
+<Base title={t.projects_title} description={t.projects_desc(projects.map((p) => p.data.title).join(", "))}>
+  <section class="relative overflow-hidden bg-cream py-16 sm:py-20">
+    <div class="grain pointer-events-none absolute inset-0 opacity-70"></div>
+    <div class="container-x relative">
+      <nav class="text-[14px] text-ink/60" aria-label="breadcrumb"><a href={href(lang, "/")} class="hover:text-ink">{t.home}</a> / <span class="text-ink">{t.nav.projects}</span></nav>
+      <h1 class="mt-4 text-4xl font-bold sm:text-5xl">{t.projects_h1}</h1>
+      <p class="lead mt-4 max-w-2xl">{t.projects_lead}</p>
+      <div class="mt-8 flex flex-wrap gap-2" id="filters">
+        {tabs.map(([k, t], i) => count(k) > 0 && (
+          <button type="button" data-k={k} aria-pressed={i === 0 ? "true" : "false"} class="rounded-full bg-white px-5 py-2.5 text-[15px] font-semibold ring-1 ring-ink/10 transition hover:ring-ink/30 aria-pressed:bg-ink aria-pressed:text-cream aria-pressed:ring-ink">
+            {t} <span class="opacity-60">{bn(count(k))}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+  <section class="py-14 sm:py-20">
+    <div class="container-x">
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" id="grid">
+        {projects.map((p, i) => <div data-status={p.data.status}><ProjectCard project={p} eager={i < 3} /></div>)}
+      </div>
+    </div>
+  </section>
+  <section class="px-5 pb-20 sm:px-8">
+    <div class="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 rounded-[2rem] surface p-8 sm:flex-row sm:items-center sm:p-12">
+      <div><h2 class="text-2xl font-bold text-on-night sm:text-3xl">{t.projects_cta_h}</h2><p class="mt-2 text-on-night-2/75">{t.projects_cta_p}</p></div>
+      <a href={href(lang, "/#contact")} class="btn-brass !px-7">{t.projects_cta} <Icon name="arrow" /></a>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const f = document.getElementById("filters")!;
+  f.addEventListener("click", (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLElement>("[data-k]"); if (!b) return;
+    const k = b.dataset.k;
+    f.querySelectorAll("[data-k]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    document.querySelectorAll<HTMLElement>("#grid > [data-status]").forEach((el) => {
+      el.hidden = k !== "all" && el.dataset.status !== k;
+      el.querySelector(".reveal")?.classList.add("in");
+    });
+  });
+</script>

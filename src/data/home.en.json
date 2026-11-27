@@ -1,0 +1,159 @@
+{
+  "hero": {
+    "badge": "Auchpara, Tongi · Minutes from Uttara",
+    "title": "Close to Dhaka,",
+    "title_highlight": "your own flat on easy installments",
+    "text": "Pay Tk 10 to 15 lakh down and the rest month by month. The keys are yours within 2 to 7 years. Let your rent money go into a home of your own.",
+    "primary_cta": "Book a free site visit",
+    "primary_message": "Hello, I would like to visit the site. When can I come?",
+    "secondary_cta": "View our projects",
+    "stats": [
+      { "label": "Active projects", "value": "5", "suffix": "" },
+      { "label": "Size (sq ft)", "value": "1000", "suffix": "–1850" },
+      { "label": "Monthly installment", "value": "50", "suffix": "k+" },
+      { "label": "Flat price (Tk)", "value": "35", "suffix": "–70 lakh" }
+    ]
+  },
+  "why": {
+    "eyebrow": "Why Saif Builders",
+    "heading": "Honesty is our only capital",
+    "text": "S M Milon Gazi oversees every project himself. He never touches land with family disputes or paperwork problems, and he hands over the flat on the date written in the contract.",
+    "quote": "What is written on paper is what will be done. No tricks.",
+    "items": [
+      { "icon": "shield", "title": "Dispute-free land", "text": "We never build on land with family disputes or court cases. Work does not start until the papers are clean." },
+      { "icon": "brick", "title": "Quality materials", "text": "From rods, cement and bricks to fittings, everything is bought from good brands. We never cut quality to save cost." },
+      { "icon": "clock", "title": "Handover as promised", "text": "The flat is handed over by the date written in the deed. Our past buyers are the proof." },
+      { "icon": "chat", "title": "Every update on WhatsApp", "text": "How far the work has come and any problems along the way are shared regularly in the buyers' group and in meetings." },
+      { "icon": "doc", "title": "Transparent dealings", "text": "You keep the receipt and account of every installment. No hidden charges." },
+      { "icon": "wallet", "title": "Affordable installments", "text": "A small down payment and long 2 to 7 year installments, so you can pay from your salary." }
+    ]
+  },
+  "services": {
+    "eyebrow": "What we offer",
+    "heading": "Two options to fit your budget",
+    "text": "Not everyone can buy land and build a house. So we made a way to start with a small amount.",
+    "installment": {
+      "badge": "Most popular",
+      "title": "Land share + flat on installments",
+      "text": "A small amount up front, then regular installments. Your share of the land is in your name while construction is still going on.",
+      "facts": [
+        { "label": "Down payment", "value": "Tk 10–15 lakh" },
+        { "label": "Monthly installment", "value": "Tk 50k–1 lakh" },
+        { "label": "Handover", "value": "2, 3, 5 or 7 years" },
+        { "label": "Size", "value": "1000–1850 sq ft" }
+      ]
+    },
+    "ready": {
+      "badge": "See, then buy",
+      "title": "Ready flats",
+      "text": "Don't want to wait? See a finished flat with your own eyes and buy it if you like it.",
+      "facts": [
+        { "label": "Price", "value": "Tk 35–70 lakh" },
+        { "label": "Size", "value": "1000–1850 sq ft" },
+        { "label": "Payment", "value": "In full or in installments" }
+      ]
+    },
+    "steps_heading": "Four steps to your keys",
+    "steps": [
+      { "title": "Site visit", "text": "Visit our office or give us a call. We'll show you around the project, and you can check the papers too." },
+      { "title": "Booking & contract", "text": "Pay the down payment and sign the contract. The handover date is written in the deed." },
+      { "title": "Monthly installments", "text": "Pay each month and get a receipt. You'll get work updates in the WhatsApp group." },
+      { "title": "Key handover", "text": "Take over your flat on the agreed date. We stay by your side for registration too." }
+    ]
+  },
+  "projects": {
+    "eyebrow": "Our projects",
+    "heading": "Find the address you'll love"
+  },
+  "emi": {
+    "eyebrow": "Installment calculator",
+    "heading": "See what you'd pay each month, right now",
+    "text": "Enter the flat price, your down payment and how many years you want to pay over. Your estimated monthly installment appears instantly.",
+    "note": "This is a simple division for illustration. The actual installment may vary with the project, floor and contract terms.",
+    "tips": [
+      { "icon": "trend", "title": "Rent vs installment", "text": "Add a little to what you already pay in rent, and the flat becomes yours." },
+      { "icon": "key", "title": "Earn from rent", "text": "Rental demand in the area is high, so renting the flat out can cover the installments." }
+    ]
+  },
+  "area": {
+    "eyebrow": "Neighbourhood",
+    "heading": "Why Auchpara, Tongi?",
+    "text": "A little away from Dhaka's noise, yet everything you need is within reach.",
+    "items": [
+      { "icon": "bus", "title": "Close to Uttara and Dhaka", "text": "Uttara is minutes away, and getting anywhere in Dhaka is easy." },
+      { "icon": "school", "title": "Good schools and colleges", "text": "Quality schools and colleges for your children are right nearby." },
+      { "icon": "hospital", "title": "Hospitals nearby", "text": "Good hospitals and clinics close by for emergencies." },
+      { "icon": "bank", "title": "Banks and ATMs", "text": "Branches and ATMs of almost every major bank within walking distance." },
+      { "icon": "cart", "title": "Markets and shops", "text": "From fresh markets to supershops, daily shopping is next door." },
+      { "icon": "building", "title": "Close to work", "text": "Garment factories, buying houses and pharma offices of Tongi-Gazipur are nearby." }
+    ],
+    "who_heading": "Who buys flats from us",
+    "who_text": "Payment plans built for self-reliant families, from salaried employees to professionals.",
+    "who": [
+      "Garment officers",
+      "Officers in charge",
+      "QC managers",
+      "Factory GMs",
+      "Quality heads",
+      "School teachers",
+      "Doctors",
+      "Engineers",
+      "Buying-house officers",
+      "Pharmaceutical officers",
+      "Freelancers",
+      "Families now renting"
+    ]
+  },
+  "reviews": {
+    "eyebrow": "Happy customers",
+    "heading": "From those who already have their keys",
+    "items": [
+      {
+        "name": "Mr. Tushar",
+        "role": "Freelancer",
+        "photo": "",
+        "text": "He started on installments with savings from freelancing. He received his dream flat within the time written in the contract, and found no discrepancy in the accounts."
+      },
+      {
+        "name": "Mr. Nazrul Islam",
+        "role": "QC Manager",
+        "photo": "",
+        "text": "Quality is his profession, so he checked everything from the rods and cement to the finishing. He is a satisfied client of Saif Builders."
+      },
+      {
+        "name": "",
+        "role": "From the feedback of many flat buyers",
+        "photo": "",
+        "text": "Many buyers say the same thing: whether there's a delay or a problem, Milon bhai calls a meeting and tells everyone in the WhatsApp group in advance. And the money is always accounted for clearly."
+      }
+    ]
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "heading": "What everyone asks",
+    "text": "Don't see your question? Call us directly, we're happy to answer.",
+    "help_heading": "Didn't find your answer?",
+    "help_text": "Ask us directly and we'll answer.",
+    "help_message": "Hello, I have a question about a flat.",
+    "office_hours": "",
+    "items": [
+      { "q": "How much do I need to book a flat?", "a": "Depending on the location and project, a one-time down payment of Tk 10 to 15 lakh is needed at the start. The rest is paid in monthly installments." },
+      { "q": "How much is the monthly installment?", "a": "Usually Tk 50 thousand to 1 lakh a month, depending on how many years you pay over. You can see an estimate with the calculator above." },
+      { "q": "When will I get the flat?", "a": "Within 2, 3, 5 or 7 years depending on the plan. The handover date is written in the contract, and the flat is handed over within that time." },
+      { "q": "What does land share mean?", "a": "Along with the flat you buy, a proportional share of the building's land is also in your name. So you own not just the flat but the land too." },
+      { "q": "What do the flats cost?", "a": "Flats of 1000 to 1850 sq ft cost between Tk 35 lakh and 70 lakh. The price depends on size, floor and project. You can buy in full or in installments." },
+      { "q": "Can I see the land papers?", "a": "Of course. All papers, including the deed, khatian and mutation, are shown before booking. You can also have them checked by your own lawyer." },
+      { "q": "How will I get construction updates?", "a": "Each project has a WhatsApp group for its buyers, where photos and news of the work are shared. Meetings with everyone are held when needed." },
+      { "q": "What if I'm late with an installment?", "a": "Talk to our office if that happens. We try to understand the reason and find a solution. The detailed rules are in the contract." }
+    ]
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "heading": "Book a site visit",
+    "text": "Fill in the form and the message will reach us from your WhatsApp."
+  },
+  "cta": {
+    "heading": "Enough rent receipts. Time for a deed of your own",
+    "text": "Give us a call today. We'll explain the plan over a cup of tea, and the decision is yours."
+  }
+}

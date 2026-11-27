@@ -1,0 +1,235 @@
+---
+import { render } from "astro:content";
+import Base from "../layouts/Base.astro";
+import Icon from "../components/Icon.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import { url, waLink, telLink, mapsLink, mapsEmbed, STATUS } from "../lib/utils";
+import { sizeRange, type Project } from "../lib/projects";
+import { data, href, langOf, num, t as tr } from "../lib/i18n";
+
+// Rendered by src/pages/projects/[id].astro and src/pages/en/projects/[id].astro
+interface Props { project: Project; others: Project[] }
+const { project: p, others } = Astro.props;
+const lang = langOf(Astro.url);
+const t = tr(lang);
+const site = data("site", lang);
+const offers = data("offers", lang);
+const bn = (n: string | number) => num(lang, n);
+const d = p.data;
+const { Content } = await render(p.entry);
+const st = { ...STATUS[d.status], label: t.status[d.status] };
+const r = sizeRange(d.floor_plans);
+const gallery = d.gallery.length ? d.gallery : [{ image: d.cover, caption: d.title }];
+const plans = [...d.floor_plans].sort((a, b) => a.size - b.size);
+const wa = (extra = "") => waLink(t.p.ask(d.title) + extra, lang);
+const offer = offers.show ? offers.items.find((o) => o.active) : undefined;
+const mapQ = d.map_query || site.map_query;
+const facts = [
+  ["building", t.p.floors, d.floors ? `${bn(d.floors)} ${t.floors}` : t.p.tba],
+  ["layers", t.p.size, r ? `${bn(r.min)}–${bn(r.max)} ${t.sqft}` : t.p.contact],
+  ["home", t.p.beds, d.bedrooms || t.p.beds_default],
+  ["clock", t.p.term, t.p.term_short(d.installment) || t.p.negotiable],
+];
+const payment = [
+  [t.p.down, d.down_payment],
+  [t.p.monthly, d.monthly],
+  [t.p.period, d.installment],
+  [t.p.price, d.ready_price],
+].filter(([, v]) => v);
+const lightbox = {
+  views: gallery.map((g) => [url(g.image), g.caption ? `${d.title}: ${g.caption}` : d.title]),
+  plans: plans.map((f) => [url(f.image), `${d.title}: ${f.label} ${bn(f.size)} ${t.sqft}`]),
+};
+const ld = {
+  "@context": "https://schema.org",
+  "@type": "ApartmentComplex",
+  name: d.title,
+  alternateName: d.name_en,
+  description: d.tagline,
+  image: gallery.map((g) => new URL(url(g.image), Astro.site).href),
+  address: { "@type": "PostalAddress", streetAddress: d.location, addressLocality: "Tongi", addressRegion: "Gazipur", addressCountry: "BD" },
+  numberOfFloors: d.floors,
+};
+---
+<Base title={d.title} description={t.p.desc(d.tagline, d.location)} image={d.cover} jsonld={ld}>
+  <section class="bg-cream pb-10 pt-8 sm:pb-14">
+    <div class="container-x">
+      <nav class="text-[14px] text-ink/60" aria-label="breadcrumb"><a href={href(lang, "/")} class="hover:text-ink">{t.home}</a> / <a href={href(lang, "/projects/")} class="hover:text-ink">{t.nav.projects}</a> / <span class="text-ink">{d.title}</span></nav>
+      <div class="mt-5 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <div class="flex flex-wrap gap-2"><span class:list={["chip", st.cls]}>{st.label}</span>{d.name_en && lang !== "en" && <span class="chip bg-white text-ink/70 ring-1 ring-ink/10" lang="en">{d.name_en}</span>}</div>
+          <h1 class="mt-3 text-4xl font-bold sm:text-5xl">{d.title}</h1>
+          <p class="mt-2 flex items-center gap-1.5 text-ink/70"><Icon name="pin" /> {d.location}</p>
+        </div>
+        <div class="flex gap-3">
+          <a href={telLink()} class="btn-outline"><Icon name="phone" /> {t.call}</a>
+          <a href={wa()} target="_blank" rel="noopener" class="btn-brass">{t.p.book} <Icon name="arrow" /></a>
+        </div>
+      </div>
+
+      <!-- gallery -->
+      <div class="mt-8 grid gap-3 lg:grid-cols-[1fr_180px]">
+        <div class="relative overflow-hidden rounded-[1.75rem] bg-ink shadow-lift">
+          <div class="snap-row flex overflow-x-auto" id="gal">
+            {gallery.map((g, i) => (
+              <button class="relative aspect-[16/10] w-full shrink-0" data-open="views" data-i={i} aria-label={t.p.enlarge(g.caption || t.p.photo)}>
+                <img src={url(g.image)} alt={`${d.title}: ${g.caption}`} class="h-full w-full object-cover" width="1600" height="1000" loading={i ? "lazy" : "eager"} />
+              </button>
+            ))}
+          </div>
+          <span id="galCap" class="chip pointer-events-none absolute bottom-4 left-4 bg-ink/75 text-white backdrop-blur">{gallery[0].caption}</span>
+          <span class="chip pointer-events-none absolute right-4 top-4 bg-white/90 text-ink"><Icon name="expand" class="h-4 w-4" /> <span class="num">{bn(gallery.length)}{t.p.photos}</span></span>
+          {gallery.length > 1 && <>
+            <button id="gPrev" class="absolute left-3 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/90 shadow-soft hover:bg-white" aria-label={t.p.prev_photo}><Icon name="left" class="h-6 w-6" /></button>
+            <button id="gNext" class="absolute right-3 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/90 shadow-soft hover:bg-white" aria-label={t.p.next_photo}><Icon name="right" class="h-6 w-6" /></button>
+          </>}
+        </div>
+        {gallery.length > 1 && <div class="snap-row flex gap-3 overflow-x-auto lg:max-h-[min(70vh,620px)] lg:flex-col lg:overflow-y-auto">
+          {gallery.map((g, i) => (
+            <button data-t={i} aria-current={i === 0 ? "true" : "false"} class="relative aspect-[16/10] w-28 shrink-0 overflow-hidden rounded-2xl opacity-70 ring-2 ring-transparent transition hover:opacity-100 aria-[current=true]:opacity-100 aria-[current=true]:ring-brass sm:w-36 lg:w-full" aria-label={g.caption || `${t.p.photo} ${bn(i + 1)}`}>
+              <img src={url(g.image)} alt="" class="h-full w-full object-cover" loading="lazy" />
+            </button>
+          ))}
+        </div>}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-14 sm:py-20">
+    <div class="container-x grid gap-10 lg:grid-cols-12">
+      <div class="lg:col-span-8">
+        <dl class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {facts.map(([i, t, v]) => <div class="card flex flex-col p-5"><span class="text-brass-d"><Icon name={i} class="h-6 w-6" /></span><dt class="mt-3 text-[14px] text-ink/60">{t}</dt><dd class="font-display text-lg font-bold leading-snug">{v}</dd></div>)}
+        </dl>
+
+        <h2 class="mt-12 text-2xl font-bold sm:text-3xl">{t.p.about}</h2>
+        <div class="prose-bn mt-3"><Content /></div>
+        {d.features.length > 0 && <ul class="mt-6 grid gap-3 sm:grid-cols-2">
+          {d.features.map((f) => <li class="flex items-center gap-3 rounded-2xl bg-cream px-4 py-3"><span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-sage text-white"><Icon name="check" class="h-4 w-4" /></span>{f}</li>)}
+        </ul>}
+
+        {plans.length > 0 && <>
+          <h2 class="mt-14 text-2xl font-bold sm:text-3xl" id="plans">{t.p.plans}</h2>
+          <p class="mt-2 text-ink/70">{t.p.plans_hint}</p>
+          <div class="mt-6 flex flex-wrap gap-2" role="tablist" aria-label={t.p.size}>
+            {plans.map((f, i) => <button role="tab" id={`tab-${i}`} aria-controls={`plan-${i}`} aria-selected={i === 0 ? "true" : "false"} data-plan={i} class="num rounded-full bg-white px-5 py-2.5 font-semibold ring-1 ring-ink/10 transition hover:ring-ink/30 aria-selected:bg-ink aria-selected:text-cream aria-selected:ring-ink">{bn(f.size)} {t.sqft}</button>)}
+          </div>
+          {plans.map((f, i) => (
+            <div id={`plan-${i}`} role="tabpanel" aria-labelledby={`tab-${i}`} hidden={i !== 0} class="mt-5 overflow-hidden rounded-[1.75rem] bg-white shadow-soft ring-1 ring-ink/5">
+              <button class="block w-full" data-open="plans" data-i={i} aria-label={t.p.plan_enlarge}><img src={url(f.image)} alt={t.p.plan_alt(d.title, bn(f.size))} class="w-full" loading="lazy" /></button>
+              <div class="flex flex-col gap-4 border-t border-ink/5 p-5 sm:flex-row sm:items-center sm:justify-between">
+                <div><p class="font-display text-xl font-bold">{f.label && `${f.label} · `}<span class="num">{bn(f.size)}</span> {t.sqft}</p><p class="text-ink/70">{[f.beds, f.baths, f.rooms].filter(Boolean).join(", ")}</p></div>
+                <div class="flex gap-2"><a href={url(f.image)} download class="btn-outline !min-h-11 !py-2"><Icon name="download" /> {t.p.download}</a><a href={wa(t.p.price_ask(bn(f.size)))} target="_blank" rel="noopener" class="btn-brass !min-h-11 !py-2">{t.p.price_cta}</a></div>
+              </div>
+            </div>
+          ))}
+        </>}
+
+        {payment.length > 0 && <>
+          <h2 class="mt-14 text-2xl font-bold sm:text-3xl">{t.p.payment}</h2>
+          <div class="mt-6 overflow-hidden rounded-[1.75rem] ring-1 ring-ink/10">
+            <table class="w-full text-left text-[15px]">
+              <thead class="surface"><tr><th scope="col" class="p-4 font-semibold">{t.p.item}</th><th scope="col" class="p-4 font-semibold">{t.p.detail}</th></tr></thead>
+              <tbody class="divide-y divide-ink/5 bg-white">
+                {payment.map(([k, v]) => <tr><th scope="row" class="p-4 font-normal text-ink/65">{k}</th><td class="p-4 font-semibold">{v}</td></tr>)}
+              </tbody>
+            </table>
+          </div>
+          <p class="mt-3 text-[14px] text-ink/60">{t.p.price_note}</p>
+        </>}
+
+        <h2 class="mt-14 text-2xl font-bold sm:text-3xl">{t.p.location}</h2>
+        <div class="relative mt-6 overflow-hidden rounded-[1.75rem] bg-cream ring-1 ring-ink/5">
+          <a href={mapsLink(mapQ)} target="_blank" rel="noopener" class="absolute inset-0 grid place-items-center font-semibold text-ink/65">{t.map_view}</a>
+          <iframe title={t.p.location_of(d.title)} class="relative h-[320px] w-full" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src={mapsEmbed(mapQ)}></iframe>
+        </div>
+      </div>
+
+      <aside class="lg:col-span-4">
+        <div class="card sticky top-24 p-6 sm:p-7">
+          <p class="text-[14px] text-ink/60">{t.p.from}</p>
+          <p class="font-display text-4xl font-bold">{t.p.from_value} <span class="text-lg font-medium text-ink/65">{t.p.from_suffix}</span></p>
+          {offer && <div class="mt-5 rounded-2xl bg-brass/15 p-4 text-[15px]">
+            <p class="flex items-center gap-2 font-semibold text-brass-d"><Icon name="gift" /> {offer.title}</p>
+            <p class="mt-1 leading-7 text-ink/80">{offer.text}</p>
+          </div>}
+          <div class="mt-6 grid gap-3">
+            <a href={wa(t.p.visit_ask)} target="_blank" rel="noopener" class="btn-wa"><Icon name="wa" /> {t.p.visit}</a>
+            <a href={telLink()} class="btn-ink num"><Icon name="phone" /> {bn(site.phone)}</a>
+          </div>
+          <ul class="mt-6 space-y-2 text-[15px] text-ink/75">
+            <li class="flex gap-2"><Icon name="shield" class="h-5 w-5 shrink-0 text-sage" /> {t.p.trust[0]}</li>
+            <li class="flex gap-2"><Icon name="clock" class="h-5 w-5 shrink-0 text-sage" /> {t.p.trust[1]}</li>
+            <li class="flex gap-2"><Icon name="chat" class="h-5 w-5 shrink-0 text-sage" /> {t.p.trust[2]}</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  {others.length > 0 && <section class="bg-cream py-14 sm:py-20">
+    <div class="container-x">
+      <h2 class="text-2xl font-bold sm:text-3xl">{t.p.others}</h2>
+      <div class="snap-row -mx-5 mt-8 flex scroll-px-5 gap-6 overflow-x-auto px-5 pb-4 sm:-mx-8 sm:scroll-px-8 sm:px-8">
+        {others.map((x) => <div class="w-[80%] shrink-0 sm:w-[45%] lg:w-[23%]"><ProjectCard project={x} /></div>)}
+      </div>
+    </div>
+  </section>}
+
+  <!-- lightbox -->
+  <div id="lb" class="fixed inset-0 z-[70] hidden bg-ink/95 backdrop-blur" role="dialog" aria-modal="true" aria-label={t.p.lightbox} data-lists={JSON.stringify(lightbox)}>
+    <button id="lbClose" class="absolute right-4 top-4 z-10 grid h-12 w-12 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20" aria-label={t.close}><Icon name="x" class="h-6 w-6" /></button>
+    <button id="lbPrev" class="absolute left-3 top-1/2 z-10 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20" aria-label={t.p.prev_photo}><Icon name="left" class="h-6 w-6" /></button>
+    <button id="lbNext" class="absolute right-3 top-1/2 z-10 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20" aria-label={t.p.next_photo}><Icon name="right" class="h-6 w-6" /></button>
+    <div class="flex h-full items-center justify-center p-4 sm:p-16"><img id="lbImg" class="max-h-full max-w-full rounded-2xl bg-white object-contain" alt="" /></div>
+    <p id="lbCap" class="absolute inset-x-0 bottom-6 px-16 text-center text-white/85"></p>
+  </div>
+</Base>
+
+<script>
+  /* gallery */
+  const gal = document.getElementById("gal")!;
+  const thumbs = [...document.querySelectorAll<HTMLElement>("[data-t]")];
+  const cap = document.getElementById("galCap")!;
+  const caps = [...gal.querySelectorAll("img")].map((i) => i.alt.split(": ").slice(1).join(": "));
+  let gi = 0;
+  const setActive = (i: number) => { gi = i; thumbs.forEach((t, k) => t.setAttribute("aria-current", String(k === i))); cap.textContent = caps[i] || ""; };
+  const goG = (i: number) => { i = (i + caps.length) % caps.length; gal.scrollTo({ left: gal.clientWidth * i, behavior: "smooth" }); setActive(i); };
+  gal.addEventListener("scroll", () => { const i = Math.round(gal.scrollLeft / gal.clientWidth); if (i !== gi) setActive(i); }, { passive: true });
+  thumbs.forEach((t) => t.addEventListener("click", () => goG(+t.dataset.t!)));
+  document.getElementById("gPrev")?.addEventListener("click", () => goG(gi - 1));
+  document.getElementById("gNext")?.addEventListener("click", () => goG(gi + 1));
+
+  /* floor plan tabs */
+  const tabs = [...document.querySelectorAll<HTMLElement>("[data-plan]")];
+  const selectTab = (b: HTMLElement) => {
+    tabs.forEach((t) => { const on = t === b; t.setAttribute("aria-selected", String(on)); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute("aria-controls")!)!.hidden = !on; });
+  };
+  tabs.forEach((b, i) => {
+    b.addEventListener("click", () => selectTab(b));
+    b.addEventListener("keydown", (e) => {
+      const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0; if (!d) return;
+      const n = tabs[(i + d + tabs.length) % tabs.length]; selectTab(n); n.focus();
+    });
+  });
+
+  /* lightbox */
+  const lb = document.getElementById("lb")!, lbImg = document.getElementById("lbImg") as HTMLImageElement, lbCap = document.getElementById("lbCap")!;
+  const lists: Record<string, [string, string][]> = JSON.parse(lb.dataset.lists!);
+  let list: [string, string][] = [], li = 0, opener: HTMLElement | null = null;
+  const show = () => { lbImg.src = list[li][0]; lbImg.alt = list[li][1]; lbCap.textContent = list[li][1]; };
+  const step = (n: number) => { li = (li + n + list.length) % list.length; show(); };
+  const close = () => { lb.classList.add("hidden"); document.body.style.overflow = ""; opener?.focus(); };
+  document.querySelectorAll<HTMLElement>("[data-open]").forEach((b) => b.addEventListener("click", () => {
+    list = lists[b.dataset.open!]; li = +b.dataset.i!; opener = b; show();
+    lb.classList.remove("hidden"); document.body.style.overflow = "hidden"; document.getElementById("lbClose")!.focus();
+  }));
+  document.getElementById("lbClose")!.addEventListener("click", close);
+  document.getElementById("lbPrev")!.addEventListener("click", () => step(-1));
+  document.getElementById("lbNext")!.addEventListener("click", () => step(1));
+  lb.addEventListener("click", (e) => { const t = e.target as HTMLElement; if (t === lb || t.parentElement === lb && t.tagName === "DIV") close(); });
+  addEventListener("keydown", (e) => {
+    if (lb.classList.contains("hidden")) return;
+    if (e.key === "Escape") close(); if (e.key === "ArrowRight") step(1); if (e.key === "ArrowLeft") step(-1);
+  });
+</script>
